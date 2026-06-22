@@ -6,7 +6,8 @@
     "dev": "next dev --webpack",
     "build": "next build --webpack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test:e2e": "python e2e-tests/run_tests.py"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.4.0",
