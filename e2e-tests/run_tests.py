@@ -69,12 +69,57 @@ class TestResultCollector(unittest.TestResult):
                 return parts[1].split("-")[0].strip()
         return "General"
 
-def generate_excel_report(results, filename="TripSync_TestReport.xlsx"):
+def generate_excel_report(results, total_assertions, start_time, duration, warnings_count, filename="TripSync_TestReport.xlsx"):
     df = pd.DataFrame(results)
     # Ensure correct columns order
     df = df[["Test ID", "Category", "Test Name", "Status", "Duration", "Error Details"]]
     df.columns = ["Test ID", "Category", "Test Name", "Status", "Duration (s)", "Error Details"]
-    df.to_excel(filename, index=False)
+    
+    total_tests = len(results)
+    passed = sum(1 for r in results if r["Status"] == "PASS")
+    failed = sum(1 for r in results if r["Status"] in ["FAIL", "ERROR"])
+    pass_rate = f"{round((passed / total_tests) * 100, 2) if total_tests > 0 else 0.0}%"
+    build_number = os.environ.get("GITHUB_RUN_NUMBER", "N/A")
+    commit_sha = os.environ.get("GITHUB_SHA", "N/A")
+    
+    summary_data = {
+        "Metric": [
+            "Total Test Cases",
+            "Total Assertions Run",
+            "Passed Cases",
+            "Failed Cases",
+            "Warnings",
+            "Pass Rate",
+            "Build Number",
+            "Commit SHA",
+            "Total Execution Duration"
+        ],
+        "Value": [
+            total_tests,
+            total_assertions,
+            passed,
+            failed,
+            warnings_count,
+            pass_rate,
+            build_number,
+            commit_sha,
+            f"{round(duration, 2)} seconds"
+        ]
+    }
+    summary_df = pd.DataFrame(summary_data)
+    
+    with pd.ExcelWriter(filename, engine="openpyxl") as writer:
+        summary_df.to_excel(writer, sheet_name="Executive Summary", index=False)
+        
+        # Write category sheets
+        categories = ["Functional", "Vulnerability", "API Unit", "UI UX", "Regression"]
+        for cat in categories:
+            cat_df = df[df["Category"] == cat]
+            cat_df.to_excel(writer, sheet_name=cat, index=False)
+            
+        # Write All Results sheet
+        df.to_excel(writer, sheet_name="All Results", index=False)
+        
     print(f"[SUCCESS] Excel report generated successfully: {filename}")
 
 def generate_html_report(results, total_assertions, start_time, duration, filename="execution-report.html"):
@@ -330,11 +375,13 @@ def generate_step_summary(results, total_assertions):
     
     with open(step_summary_path, "w", encoding="utf-8") as f:
         f.write("# TripSync E2E Results\n\n")
+        f.write(f"Total Tests: {total_tests}\n")
+        f.write(f"Passed: {passed}\n")
+        f.write(f"Failed: {failed}\n")
+        f.write(f"Warnings: {warnings}\n")
+        f.write(f"Pass Rate: {pass_rate}%\n\n")
+        f.write("## Metadata & Execution Details\n")
         f.write(f"* **Total Assertions**: {total_assertions}\n")
-        f.write(f"* **Passed**: {passed}\n")
-        f.write(f"* **Failed**: {failed}\n")
-        f.write(f"* **Warnings**: {warnings}\n")
-        f.write(f"* **Pass Percentage**: {pass_rate}%\n")
         f.write(f"* **Build Number**: {build_number}\n")
         f.write(f"* **Commit SHA**: {commit_sha}\n")
     print(f"[SUCCESS] Step summary written to: {step_summary_path}")
@@ -352,7 +399,8 @@ def main():
     total_assertions = TripSyncTestSuite.assertion_count
     
     # Generate reports
-    generate_excel_report(collector.results)
+    warnings_count = len(collector.skipped) if hasattr(collector, "skipped") else 0
+    generate_excel_report(collector.results, total_assertions, start_time, duration, warnings_count)
     generate_html_report(collector.results, total_assertions, start_time, duration)
     generate_step_summary(collector.results, total_assertions)
     
