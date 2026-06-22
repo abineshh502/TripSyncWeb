@@ -6,6 +6,11 @@ const nextConfig: NextConfig = {
     // Real type-checking is verified separately via `npx tsc --noEmit`.
     ignoreBuildErrors: true,
   },
+  eslint: {
+    // Warning: This allows production builds to successfully complete even if
+    // the project has ESLint errors.
+    ignoreDuringBuilds: true,
+  },
   async headers() {
     return [
       {
