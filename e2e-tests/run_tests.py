@@ -375,13 +375,11 @@ def generate_step_summary(results, total_assertions):
     
     with open(step_summary_path, "w", encoding="utf-8") as f:
         f.write("# TripSync E2E Results\n\n")
-        f.write(f"Total Tests: {total_tests}\n")
-        f.write(f"Passed: {passed}\n")
-        f.write(f"Failed: {failed}\n")
-        f.write(f"Warnings: {warnings}\n")
-        f.write(f"Pass Rate: {pass_rate}%\n\n")
-        f.write("## Metadata & Execution Details\n")
-        f.write(f"* **Total Assertions**: {total_assertions}\n")
+        f.write(f"* **Total Tests**: {total_tests}\n")
+        f.write(f"* **Passed**: {passed}\n")
+        f.write(f"* **Failed**: {failed}\n")
+        f.write(f"* **Warnings**: {warnings}\n")
+        f.write(f"* **Pass Rate**: {pass_rate}%\n")
         f.write(f"* **Build Number**: {build_number}\n")
         f.write(f"* **Commit SHA**: {commit_sha}\n")
     print(f"[SUCCESS] Step summary written to: {step_summary_path}")
