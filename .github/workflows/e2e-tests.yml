@@ -27,7 +27,7 @@ jobs:
     - name: Set up Node.js Environment
       uses: actions/setup-node@v4
       with:
-        node-version: '18'
+        node-version: '22'
         cache: 'npm'
         cache-dependency-path: 'package-lock.json'
 
@@ -37,7 +37,7 @@ jobs:
 
     - name: Validate Next.js Production Build
       run: |
-        npm run build
+        npm run build > build-log.txt 2>&1 || (cat build-log.txt && exit 1)
 
     - name: Run Sequential Selenium E2E Tests
       run: |
@@ -56,3 +56,10 @@ jobs:
       with:
         name: TripSync-HTML-TestReport
         path: execution-report.html
+
+    - name: Upload Build Log Artifact
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: TripSync-Build-Log
+        path: build-log.txt
