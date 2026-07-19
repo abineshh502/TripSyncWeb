@@ -1,0 +1,398 @@
+{
+  "findings": [
+    {
+      "id": "WEB-0001",
+      "severity": "MEDIUM",
+      "category": "Authorization / Client-Side Auth Guard",
+      "file": "/src/app/(dashboard)/layout.tsx",
+      "function": "DashboardLayout",
+      "line": 19,
+      "description": "Route protection is implemented client-side only using useEffect. This creates a brief window where protected content may flash before redirect.",
+      "rootCause": "Authentication guard uses useEffect + router.push pattern which runs after initial render. A fast network or cached response could expose protected routes momentarily.",
+      "impact": "Protected page content may briefly flash to unauthenticated users. Does not provide true server-side protection. Search engine crawlers could index protected content.",
+      "recommendation": "Implement server-side auth using Next.js middleware (middleware.ts) to redirect unauthenticated users before any content is served. Use Firebase Admin to verify tokens in middleware.",
+      "cwe": "CWE-285",
+      "owasp": "A01 - Broken Access Control",
+      "evidence": "useEffect-based auth guard in \\src\\app\\(dashboard)\\layout.tsx"
+    },
+    {
+      "id": "WEB-0002",
+      "severity": "MEDIUM",
+      "category": "Authorization / Client-Side Auth Guard",
+      "file": "/src/app/(dashboard)/trips/[id]/page.tsx",
+      "function": "DashboardLayout",
+      "line": 63,
+      "description": "Route protection is implemented client-side only using useEffect. This creates a brief window where protected content may flash before redirect.",
+      "rootCause": "Authentication guard uses useEffect + router.push pattern which runs after initial render. A fast network or cached response could expose protected routes momentarily.",
+      "impact": "Protected page content may briefly flash to unauthenticated users. Does not provide true server-side protection. Search engine crawlers could index protected content.",
+      "recommendation": "Implement server-side auth using Next.js middleware (middleware.ts) to redirect unauthenticated users before any content is served. Use Firebase Admin to verify tokens in middleware.",
+      "cwe": "CWE-285",
+      "owasp": "A01 - Broken Access Control",
+      "evidence": "useEffect-based auth guard in \\src\\app\\(dashboard)\\trips\\[id]\\page.tsx"
+    },
+    {
+      "id": "WEB-0003",
+      "severity": "MEDIUM",
+      "category": "Security Headers / CSP unsafe-inline",
+      "file": "/next.config.ts",
+      "function": "headers()",
+      "line": 39,
+      "description": "Content Security Policy includes 'unsafe-inline' which allows inline scripts and styles.",
+      "rootCause": "CSP script-src or style-src contains 'unsafe-inline', weakening XSS protections.",
+      "impact": "Inline script injection is possible. Reduces effectiveness of CSP as an XSS mitigation layer.",
+      "recommendation": "Use nonce-based or hash-based CSP instead of 'unsafe-inline'. Implement Next.js nonce generation for inline scripts.",
+      "cwe": "CWE-693",
+      "owasp": "A05 - Security Misconfiguration",
+      "evidence": "'unsafe-inline' found in Content-Security-Policy"
+    },
+    {
+      "id": "WEB-0004",
+      "severity": "MEDIUM",
+      "category": "Authentication / Unauthenticated API Call",
+      "file": "/src/services/api.ts",
+      "function": "N/A",
+      "line": 394,
+      "description": "API call to backend does not include an Authorization header. Backend endpoints may lack authentication.",
+      "rootCause": "fetch() to backend API_BASE_URL without attaching Firebase ID token in Authorization header.",
+      "impact": "Backend endpoints may be publicly accessible without authentication. User data could be accessed without proper authorization.",
+      "recommendation": "Attach Firebase ID token to all authenticated API requests: 'Authorization: Bearer ' + await user.getIdToken(). Verify token in backend middleware.",
+      "cwe": "CWE-306",
+      "owasp": "A07 - Identification and Authentication Failures",
+      "evidence": "const response = await fetch(`${API_BASE_URL}/otp/send`, {"
+    },
+    {
+      "id": "WEB-0005",
+      "severity": "MEDIUM",
+      "category": "Authentication / Unauthenticated API Call",
+      "file": "/src/services/api.ts",
+      "function": "N/A",
+      "line": 413,
+      "description": "API call to backend does not include an Authorization header. Backend endpoints may lack authentication.",
+      "rootCause": "fetch() to backend API_BASE_URL without attaching Firebase ID token in Authorization header.",
+      "impact": "Backend endpoints may be publicly accessible without authentication. User data could be accessed without proper authorization.",
+      "recommendation": "Attach Firebase ID token to all authenticated API requests: 'Authorization: Bearer ' + await user.getIdToken(). Verify token in backend middleware.",
+      "cwe": "CWE-306",
+      "owasp": "A07 - Identification and Authentication Failures",
+      "evidence": "const response = await fetch(`${API_BASE_URL}/otp/verify`, {"
+    },
+    {
+      "id": "WEB-0006",
+      "severity": "MODERATE",
+      "category": "Dependencies / next",
+      "file": "/package.json",
+      "function": "N/A",
+      "line": 1,
+      "description": "npm audit found MODERATE severity vulnerability in next.",
+      "rootCause": "next version has a known security vulnerability.",
+      "impact": "Dependency vulnerability in next may be exploitable depending on usage.",
+      "recommendation": "Run 'npm audit fix' to resolve.",
+      "cwe": "CWE-1104",
+      "owasp": "A06 - Vulnerable and Outdated Components",
+      "evidence": "next: moderate"
+    },
+    {
+      "id": "WEB-0007",
+      "severity": "MODERATE",
+      "category": "Dependencies / postcss",
+      "file": "/package.json",
+      "function": "N/A",
+      "line": 1,
+      "description": "npm audit found MODERATE severity vulnerability in postcss.",
+      "rootCause": "postcss version has a known security vulnerability.",
+      "impact": "Dependency vulnerability in postcss may be exploitable depending on usage.",
+      "recommendation": "Run 'npm audit fix' to resolve.",
+      "cwe": "CWE-1104",
+      "owasp": "A06 - Vulnerable and Outdated Components",
+      "evidence": "postcss: moderate"
+    }
+  ],
+  "depFindings": [
+    {
+      "package": "next",
+      "installedVersion": "16.2.9",
+      "latestVersion": "15.x",
+      "severity": "INFO",
+      "description": "Verify this is the latest stable Next.js version. Check https://nextjs.org/blog for security advisories.",
+      "recommendation": "Run 'npm audit' and update to the latest stable version of next."
+    },
+    {
+      "package": "firebase",
+      "installedVersion": "^12.14.0",
+      "latestVersion": "11.x",
+      "severity": "INFO",
+      "description": "Firebase SDK version should be kept current. Check Firebase release notes for security patches.",
+      "recommendation": "Run 'npm audit' and update to the latest stable version of firebase."
+    },
+    {
+      "package": "next",
+      "installedVersion": "9.3.4-canary.0 - 16.3.0-canary.5",
+      "latestVersion": "Fix available",
+      "severity": "MODERATE",
+      "description": "next: postcss",
+      "recommendation": "Run 'npm audit fix' or update next to the fixed version.",
+      "cwe": "CWE-1104",
+      "via": "postcss"
+    },
+    {
+      "package": "postcss",
+      "installedVersion": "<8.5.10",
+      "latestVersion": "Fix available",
+      "severity": "MODERATE",
+      "description": "postcss: PostCSS has XSS via Unescaped </style> in its CSS Stringify Output",
+      "recommendation": "Run 'npm audit fix' or update postcss to the fixed version.",
+      "cwe": "CWE-1104",
+      "via": "https://github.com/advisories/GHSA-qx2v-qp2m-jg93"
+    }
+  ],
+  "xlsxData": {
+    "findings": [
+      {
+        "id": "WEB-0001",
+        "severity": "MEDIUM",
+        "category": "Authorization / Client-Side Auth Guard",
+        "file": "/src/app/(dashboard)/layout.tsx",
+        "function": "DashboardLayout",
+        "line": 19,
+        "description": "Route protection is implemented client-side only using useEffect. This creates a brief window where protected content may flash before redirect.",
+        "rootCause": "Authentication guard uses useEffect + router.push pattern which runs after initial render. A fast network or cached response could expose protected routes momentarily.",
+        "impact": "Protected page content may briefly flash to unauthenticated users. Does not provide true server-side protection. Search engine crawlers could index protected content.",
+        "recommendation": "Implement server-side auth using Next.js middleware (middleware.ts) to redirect unauthenticated users before any content is served. Use Firebase Admin to verify tokens in middleware.",
+        "cwe": "CWE-285",
+        "owasp": "A01 - Broken Access Control",
+        "evidence": "useEffect-based auth guard in \\src\\app\\(dashboard)\\layout.tsx"
+      },
+      {
+        "id": "WEB-0002",
+        "severity": "MEDIUM",
+        "category": "Authorization / Client-Side Auth Guard",
+        "file": "/src/app/(dashboard)/trips/[id]/page.tsx",
+        "function": "DashboardLayout",
+        "line": 63,
+        "description": "Route protection is implemented client-side only using useEffect. This creates a brief window where protected content may flash before redirect.",
+        "rootCause": "Authentication guard uses useEffect + router.push pattern which runs after initial render. A fast network or cached response could expose protected routes momentarily.",
+        "impact": "Protected page content may briefly flash to unauthenticated users. Does not provide true server-side protection. Search engine crawlers could index protected content.",
+        "recommendation": "Implement server-side auth using Next.js middleware (middleware.ts) to redirect unauthenticated users before any content is served. Use Firebase Admin to verify tokens in middleware.",
+        "cwe": "CWE-285",
+        "owasp": "A01 - Broken Access Control",
+        "evidence": "useEffect-based auth guard in \\src\\app\\(dashboard)\\trips\\[id]\\page.tsx"
+      },
+      {
+        "id": "WEB-0003",
+        "severity": "MEDIUM",
+        "category": "Security Headers / CSP unsafe-inline",
+        "file": "/next.config.ts",
+        "function": "headers()",
+        "line": 39,
+        "description": "Content Security Policy includes 'unsafe-inline' which allows inline scripts and styles.",
+        "rootCause": "CSP script-src or style-src contains 'unsafe-inline', weakening XSS protections.",
+        "impact": "Inline script injection is possible. Reduces effectiveness of CSP as an XSS mitigation layer.",
+        "recommendation": "Use nonce-based or hash-based CSP instead of 'unsafe-inline'. Implement Next.js nonce generation for inline scripts.",
+        "cwe": "CWE-693",
+        "owasp": "A05 - Security Misconfiguration",
+        "evidence": "'unsafe-inline' found in Content-Security-Policy"
+      },
+      {
+        "id": "WEB-0004",
+        "severity": "MEDIUM",
+        "category": "Authentication / Unauthenticated API Call",
+        "file": "/src/services/api.ts",
+        "function": "N/A",
+        "line": 394,
+        "description": "API call to backend does not include an Authorization header. Backend endpoints may lack authentication.",
+        "rootCause": "fetch() to backend API_BASE_URL without attaching Firebase ID token in Authorization header.",
+        "impact": "Backend endpoints may be publicly accessible without authentication. User data could be accessed without proper authorization.",
+        "recommendation": "Attach Firebase ID token to all authenticated API requests: 'Authorization: Bearer ' + await user.getIdToken(). Verify token in backend middleware.",
+        "cwe": "CWE-306",
+        "owasp": "A07 - Identification and Authentication Failures",
+        "evidence": "const response = await fetch(`${API_BASE_URL}/otp/send`, {"
+      },
+      {
+        "id": "WEB-0005",
+        "severity": "MEDIUM",
+        "category": "Authentication / Unauthenticated API Call",
+        "file": "/src/services/api.ts",
+        "function": "N/A",
+        "line": 413,
+        "description": "API call to backend does not include an Authorization header. Backend endpoints may lack authentication.",
+        "rootCause": "fetch() to backend API_BASE_URL without attaching Firebase ID token in Authorization header.",
+        "impact": "Backend endpoints may be publicly accessible without authentication. User data could be accessed without proper authorization.",
+        "recommendation": "Attach Firebase ID token to all authenticated API requests: 'Authorization: Bearer ' + await user.getIdToken(). Verify token in backend middleware.",
+        "cwe": "CWE-306",
+        "owasp": "A07 - Identification and Authentication Failures",
+        "evidence": "const response = await fetch(`${API_BASE_URL}/otp/verify`, {"
+      },
+      {
+        "id": "WEB-0006",
+        "severity": "MODERATE",
+        "category": "Dependencies / next",
+        "file": "/package.json",
+        "function": "N/A",
+        "line": 1,
+        "description": "npm audit found MODERATE severity vulnerability in next.",
+        "rootCause": "next version has a known security vulnerability.",
+        "impact": "Dependency vulnerability in next may be exploitable depending on usage.",
+        "recommendation": "Run 'npm audit fix' to resolve.",
+        "cwe": "CWE-1104",
+        "owasp": "A06 - Vulnerable and Outdated Components",
+        "evidence": "next: moderate"
+      },
+      {
+        "id": "WEB-0007",
+        "severity": "MODERATE",
+        "category": "Dependencies / postcss",
+        "file": "/package.json",
+        "function": "N/A",
+        "line": 1,
+        "description": "npm audit found MODERATE severity vulnerability in postcss.",
+        "rootCause": "postcss version has a known security vulnerability.",
+        "impact": "Dependency vulnerability in postcss may be exploitable depending on usage.",
+        "recommendation": "Run 'npm audit fix' to resolve.",
+        "cwe": "CWE-1104",
+        "owasp": "A06 - Vulnerable and Outdated Components",
+        "evidence": "postcss: moderate"
+      }
+    ],
+    "dependencies": [
+      {
+        "package": "next",
+        "installedVersion": "16.2.9",
+        "latestVersion": "15.x",
+        "severity": "INFO",
+        "description": "Verify this is the latest stable Next.js version. Check https://nextjs.org/blog for security advisories.",
+        "recommendation": "Run 'npm audit' and update to the latest stable version of next."
+      },
+      {
+        "package": "firebase",
+        "installedVersion": "^12.14.0",
+        "latestVersion": "11.x",
+        "severity": "INFO",
+        "description": "Firebase SDK version should be kept current. Check Firebase release notes for security patches.",
+        "recommendation": "Run 'npm audit' and update to the latest stable version of firebase."
+      },
+      {
+        "package": "next",
+        "installedVersion": "9.3.4-canary.0 - 16.3.0-canary.5",
+        "latestVersion": "Fix available",
+        "severity": "MODERATE",
+        "description": "next: postcss",
+        "recommendation": "Run 'npm audit fix' or update next to the fixed version.",
+        "cwe": "CWE-1104",
+        "via": "postcss"
+      },
+      {
+        "package": "postcss",
+        "installedVersion": "<8.5.10",
+        "latestVersion": "Fix available",
+        "severity": "MODERATE",
+        "description": "postcss: PostCSS has XSS via Unescaped </style> in its CSS Stringify Output",
+        "recommendation": "Run 'npm audit fix' or update postcss to the fixed version.",
+        "cwe": "CWE-1104",
+        "via": "https://github.com/advisories/GHSA-qx2v-qp2m-jg93"
+      }
+    ],
+    "riskSummary": {
+      "CRITICAL": 0,
+      "HIGH": 0,
+      "MEDIUM": 5,
+      "LOW": 0,
+      "INFO": 0,
+      "MODERATE": 2
+    },
+    "recommendations": [
+      {
+        "priority": "P0",
+        "action": "Rotate all exposed API keys",
+        "timeline": "24 hours",
+        "effort": "Low"
+      },
+      {
+        "priority": "P0",
+        "action": "Fix OTP returned in API response",
+        "timeline": "24 hours",
+        "effort": "Low"
+      },
+      {
+        "priority": "P1",
+        "action": "Implement middleware.ts server-side route protection",
+        "timeline": "1 week",
+        "effort": "Medium"
+      },
+      {
+        "priority": "P1",
+        "action": "Remove Firebase keys from source code",
+        "timeline": "1 week",
+        "effort": "Low"
+      },
+      {
+        "priority": "P2",
+        "action": "Remove unsafe-eval from CSP",
+        "timeline": "2 weeks",
+        "effort": "Medium"
+      },
+      {
+        "priority": "P2",
+        "action": "Add Authorization headers to API calls",
+        "timeline": "2 weeks",
+        "effort": "Medium"
+      },
+      {
+        "priority": "P3",
+        "action": "Add HSTS header",
+        "timeline": "1 month",
+        "effort": "Low"
+      },
+      {
+        "priority": "P3",
+        "action": "Implement Firebase App Check",
+        "timeline": "1 month",
+        "effort": "High"
+      },
+      {
+        "priority": "P4",
+        "action": "Add Permissions-Policy header",
+        "timeline": "1 quarter",
+        "effort": "Low"
+      }
+    ]
+  },
+  "techStack": {
+    "nextjs": true,
+    "react": true,
+    "typescript": true,
+    "tailwindcss": true,
+    "firebase": true,
+    "reactHookForm": true,
+    "zod": true,
+    "framerMotion": true,
+    "version": {
+      "next": "16.2.9",
+      "react": "19.2.4",
+      "firebase": "^12.14.0",
+      "typescript": "^5"
+    }
+  },
+  "timestamp": "2026-07-19T17:28:10.776Z",
+  "score": {
+    "score": 81,
+    "riskLevel": "MEDIUM",
+    "distribution": {
+      "critical": 0,
+      "high": 0,
+      "medium": 5,
+      "low": 0,
+      "info": 0,
+      "CRITICAL": 0,
+      "HIGH": 0,
+      "MEDIUM": 5,
+      "LOW": 0,
+      "INFO": 0
+    },
+    "metrics": {
+      "authCoverage": 1,
+      "rateLimitCoverage": 1,
+      "securityHeadersCoverage": 1,
+      "dependencyHealth": 0.8,
+      "configSafety": 1
+    }
+  }
+}

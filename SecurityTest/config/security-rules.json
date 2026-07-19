@@ -1,0 +1,150 @@
+{
+  "version": "1.0.0",
+  "scanner": "TripSync Web SAST Scanner",
+  "target": "Next.js / React / TypeScript / Firebase",
+  "rules": {
+    "authentication": {
+      "enabled": true,
+      "checks": [
+        "firebase_api_key_exposed",
+        "hardcoded_credentials",
+        "token_storage_localstorage",
+        "token_storage_sessionstorage",
+        "jwt_decode_without_verify",
+        "auth_state_client_only",
+        "missing_auth_guard"
+      ]
+    },
+    "authorization": {
+      "enabled": true,
+      "checks": [
+        "missing_route_protection",
+        "client_side_auth_only",
+        "firestore_rules_not_verified",
+        "role_check_client_side"
+      ]
+    },
+    "firebase": {
+      "enabled": true,
+      "checks": [
+        "firebase_config_hardcoded",
+        "next_public_firebase_key",
+        "firebase_emulator_enabled",
+        "firestore_no_rules",
+        "missing_firebase_admin_server"
+      ]
+    },
+    "injection": {
+      "enabled": true,
+      "checks": [
+        "dangerouslySetInnerHTML",
+        "eval_usage",
+        "document_write",
+        "innerhtml_assignment",
+        "template_literal_injection",
+        "unvalidated_url_params"
+      ]
+    },
+    "secrets": {
+      "enabled": true,
+      "checks": [
+        "api_key_in_code",
+        "next_public_secret",
+        "hardcoded_password",
+        "hardcoded_token",
+        "env_var_logged"
+      ]
+    },
+    "headers": {
+      "enabled": true,
+      "checks": [
+        "missing_csp",
+        "unsafe_inline_script",
+        "missing_hsts",
+        "missing_x_frame_options",
+        "missing_content_type_options",
+        "csp_unsafe_eval"
+      ]
+    },
+    "dependencies": {
+      "enabled": true,
+      "checks": [
+        "outdated_packages",
+        "known_vulnerabilities",
+        "missing_lock_file"
+      ]
+    },
+    "csrf": {
+      "enabled": true,
+      "checks": [
+        "missing_csrf_token",
+        "missing_same_site_cookie",
+        "state_changing_get_request"
+      ]
+    },
+    "data_exposure": {
+      "enabled": true,
+      "checks": [
+        "sensitive_data_console_log",
+        "pii_in_url",
+        "error_details_exposed"
+      ]
+    }
+  },
+  "severity_levels": ["CRITICAL", "HIGH", "MEDIUM", "LOW", "INFO"],
+  "output_formats": ["xlsx", "markdown"],
+  "scan_paths": [
+    "src/**",
+    "components/**",
+    "hooks/**",
+    "contexts/**",
+    "services/**",
+    "utils/**",
+    "styles/**",
+    "public/**",
+    "next.config.*",
+    "middleware.*",
+    ".env*",
+    "package.json",
+    "package-lock.json"
+  ],
+  "exclude_paths": [
+    "node_modules/**",
+    ".next/**",
+    ".git/**",
+    "SecurityTest/**",
+    "e2e-tests/**",
+    "dist/**",
+    "*.test.*",
+    "*.spec.*"
+  ],
+  "owasp_categories": {
+    "A01": "Broken Access Control",
+    "A02": "Cryptographic Failures",
+    "A03": "Injection",
+    "A04": "Insecure Design",
+    "A05": "Security Misconfiguration",
+    "A06": "Vulnerable and Outdated Components",
+    "A07": "Identification and Authentication Failures",
+    "A08": "Software and Data Integrity Failures",
+    "A09": "Security Logging and Monitoring Failures",
+    "A10": "Server-Side Request Forgery"
+  },
+  "cwe_references": {
+    "CWE-79": "Cross-site Scripting (XSS)",
+    "CWE-200": "Exposure of Sensitive Information",
+    "CWE-256": "Unprotected Storage of Credentials",
+    "CWE-312": "Cleartext Storage of Sensitive Information",
+    "CWE-319": "Cleartext Transmission of Sensitive Information",
+    "CWE-352": "Cross-Site Request Forgery (CSRF)",
+    "CWE-521": "Weak Password Requirements",
+    "CWE-522": "Insufficiently Protected Credentials",
+    "CWE-598": "Use of GET Request Method with Sensitive Query Strings",
+    "CWE-614": "Sensitive Cookie in HTTPS Session Without 'Secure' Attribute",
+    "CWE-693": "Protection Mechanism Failure",
+    "CWE-732": "Incorrect Permission Assignment for Critical Resource",
+    "CWE-798": "Use of Hard-coded Credentials",
+    "CWE-916": "Use of Password Hash With Insufficient Computational Effort",
+    "CWE-1021": "Improper Restriction of Rendered UI Layers or Frames"
+  }
+}
