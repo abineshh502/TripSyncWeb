@@ -26,7 +26,7 @@ import { auth } from "../lib/firebase";
 const getApiBaseUrl = () => {
   const envUrl =
     process.env.NEXT_PUBLIC_API_URL ||
-    "https://tripsyncbackend-production-37a2.up.railway.app";
+    "https://tripsync-backend-ra7p.onrender.com";
   const cleaned = envUrl.replace(/\/+$/, "");
   return cleaned.endsWith("/api") ? cleaned : `${cleaned}/api`;
 };

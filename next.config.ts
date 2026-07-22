@@ -17,8 +17,8 @@ import type { NextConfig } from "next";
 // External services that need to be explicitly listed in CSP.
 // Add new domains here; never use wildcards.
 const TRUSTED_BACKEND_URLS = [
-  process.env.NEXT_PUBLIC_API_URL || "https://tripsyncbackend-production-37a2.up.railway.app",
-  "https://tripsyncweb-backend.onrender.com",
+  process.env.NEXT_PUBLIC_API_URL || "https://tripsync-backend-ra7p.onrender.com",
+  "https://tripsync-backend-ra7p.onrender.com",
 ].join(" ");
 
 const TRUSTED_CONNECT = [

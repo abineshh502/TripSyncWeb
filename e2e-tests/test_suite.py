@@ -24,7 +24,7 @@ class TripSyncTestSuite(unittest.TestCase):
         
         cls.driver = webdriver.Chrome(options=chrome_options)
         cls.base_url = "https://trip-sync-web.vercel.app"
-        cls.backend_url = "https://tripsyncbackend-production-37a2.up.railway.app"
+        cls.backend_url = "https://tripsync-backend-ra7p.onrender.com"
         
         # Unique credentials
         cls.test_email = f"testuser_{int(time.time())}_{random.randint(100,999)}@tripsynctest.com"
