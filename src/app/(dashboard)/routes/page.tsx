@@ -229,7 +229,6 @@ function MapPageContent() {
         loadRouteById(cleanId);
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // ── Boot: grab GPS silently ───────────────────────────────────────────────
@@ -1080,7 +1079,7 @@ function MapPageContent() {
   };
 
   // ── Suggestion dropdown ───────────────────────────────────────────────────
-  const SuggestionList = () => (
+  const renderSuggestionList = () => (
     suggestions.length > 0 ? (
       <div className="absolute top-full left-0 right-0 mt-1 z-[9999] bg-slate-900 border border-white/10 rounded-xl shadow-2xl overflow-hidden max-h-56 overflow-y-auto">
         {suggestions.map((s, i) => (
@@ -1192,7 +1191,7 @@ function MapPageContent() {
                       </button>
                     )}
                   </div>
-                  {activeInput === "explore" && <SuggestionList />}
+                  {activeInput === "explore" && renderSuggestionList()}
                 </div>
 
                 {/* Category Filters */}
@@ -1322,7 +1321,7 @@ function MapPageContent() {
                         <Crosshair className="h-4 w-4" />
                       </button>
                     </div>
-                    {activeInput === "dir_start" && <SuggestionList />}
+                    {activeInput === "dir_start" && renderSuggestionList()}
                   </div>
                 </div>
 
@@ -1347,7 +1346,7 @@ function MapPageContent() {
                         className="flex-1 bg-transparent text-white text-sm placeholder-slate-500 outline-none"
                       />
                     </div>
-                    {activeInput === "dir_dest" && <SuggestionList />}
+                    {activeInput === "dir_dest" && renderSuggestionList()}
                   </div>
                 </div>
 
@@ -1490,7 +1489,7 @@ function MapPageContent() {
                         <Crosshair className="h-4 w-4" />
                       </button>
                     </div>
-                    {activeInput === "builder_start" && <SuggestionList />}
+                    {activeInput === "builder_start" && renderSuggestionList()}
                   </div>
                 </div>
 
@@ -1515,7 +1514,7 @@ function MapPageContent() {
                         className="flex-1 bg-transparent text-white text-sm placeholder-slate-500 outline-none"
                       />
                     </div>
-                    {activeInput === "builder_add" && <SuggestionList />}
+                    {activeInput === "builder_add" && renderSuggestionList()}
                   </div>
                 </div>
 

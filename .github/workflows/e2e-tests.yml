@@ -2,9 +2,9 @@ name: TripSyncWeb E2E Tests CI/CD
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, master ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, master ]
   workflow_dispatch:
 
 jobs:
@@ -28,7 +28,7 @@ jobs:
     - name: Set up Node.js Environment
       uses: actions/setup-node@v4
       with:
-        node-version: '22'
+        node-version: '20'
         cache: 'npm'
         cache-dependency-path: 'package-lock.json'
 
@@ -36,13 +36,25 @@ jobs:
       run: |
         npm ci
 
-    - name: Validate Next.js Production Build
+    - name: Run ESLint Linting
       run: |
-        npm run build > build-log.txt 2>&1 || (cat build-log.txt && exit 1)
+        npm run lint
 
-    - name: Run Sequential Selenium E2E Tests
+    - name: Run TypeScript Type Check
       run: |
-        npm run test:e2e
+        npm run type-check
+
+    - name: Validate Next.js Production Build
+      env:
+        NEXT_PUBLIC_API_URL: https://tripsync-backend-ra7p.onrender.com
+      run: |
+        npm run build
+
+    - name: Run E2E & API Verification Tests
+      env:
+        NEXT_PUBLIC_API_URL: https://tripsync-backend-ra7p.onrender.com
+      run: |
+        python e2e-tests/run_tests.py
 
     - name: Upload Test Excel Report Artifact
       if: always()
@@ -58,9 +70,11 @@ jobs:
         name: TripSync-HTML-TestReport
         path: execution-report.html
 
-    - name: Upload Build Log Artifact
-      if: failure()
+    - name: Upload Markdown & JSON Report Artifacts
+      if: always()
       uses: actions/upload-artifact@v4
       with:
-        name: TripSync-Build-Log
-        path: build-log.txt
+        name: TripSync-Exec-Reports
+        path: |
+          execution-report.md
+          execution-report.json

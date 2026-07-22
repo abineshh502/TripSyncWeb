@@ -7,6 +7,8 @@
     "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint",
+    "type-check": "tsc --noEmit",
+    "test": "python e2e-tests/run_tests.py",
     "test:e2e": "python e2e-tests/run_tests.py"
   },
   "dependencies": {

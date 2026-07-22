@@ -1,15 +1,15 @@
 {
-  "score": 81,
+  "score": 75,
   "riskLevel": "MEDIUM",
   "distribution": {
     "critical": 0,
     "high": 0,
-    "medium": 5,
+    "medium": 9,
     "low": 0,
     "info": 0,
     "CRITICAL": 0,
     "HIGH": 0,
-    "MEDIUM": 5,
+    "MEDIUM": 9,
     "LOW": 0,
     "INFO": 0
   },
@@ -17,7 +17,7 @@
     "authCoverage": 1,
     "rateLimitCoverage": 1,
     "securityHeadersCoverage": 1,
-    "dependencyHealth": 0.8,
+    "dependencyHealth": 0.4,
     "configSafety": 1
   }
 }

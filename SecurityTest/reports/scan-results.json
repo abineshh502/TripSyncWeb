@@ -19,16 +19,16 @@
       "id": "WEB-0002",
       "severity": "MEDIUM",
       "category": "Authorization / Client-Side Auth Guard",
-      "file": "/src/app/(dashboard)/trips/[id]/page.tsx",
+      "file": "/src/app/(dashboard)/trips/[id]/TripDetailClient.tsx",
       "function": "DashboardLayout",
-      "line": 63,
+      "line": 61,
       "description": "Route protection is implemented client-side only using useEffect. This creates a brief window where protected content may flash before redirect.",
       "rootCause": "Authentication guard uses useEffect + router.push pattern which runs after initial render. A fast network or cached response could expose protected routes momentarily.",
       "impact": "Protected page content may briefly flash to unauthenticated users. Does not provide true server-side protection. Search engine crawlers could index protected content.",
       "recommendation": "Implement server-side auth using Next.js middleware (middleware.ts) to redirect unauthenticated users before any content is served. Use Firebase Admin to verify tokens in middleware.",
       "cwe": "CWE-285",
       "owasp": "A01 - Broken Access Control",
-      "evidence": "useEffect-based auth guard in \\src\\app\\(dashboard)\\trips\\[id]\\page.tsx"
+      "evidence": "useEffect-based auth guard in \\src\\app\\(dashboard)\\trips\\[id]\\TripDetailClient.tsx"
     },
     {
       "id": "WEB-0003",
@@ -77,33 +77,93 @@
     },
     {
       "id": "WEB-0006",
-      "severity": "MODERATE",
+      "severity": "MEDIUM",
+      "category": "Dependencies / brace-expansion",
+      "file": "/package.json",
+      "function": "N/A",
+      "line": 1,
+      "description": "npm audit advisory for dev/build dependency brace-expansion.",
+      "rootCause": "brace-expansion version has a known security advisory.",
+      "impact": "Build-time dependency advisory in brace-expansion.",
+      "recommendation": "Run 'npm audit fix' to resolve.",
+      "cwe": "CWE-1104",
+      "owasp": "A06 - Vulnerable and Outdated Components",
+      "evidence": "brace-expansion: high"
+    },
+    {
+      "id": "WEB-0007",
+      "severity": "MEDIUM",
+      "category": "Dependencies / js-yaml",
+      "file": "/package.json",
+      "function": "N/A",
+      "line": 1,
+      "description": "npm audit advisory for dev/build dependency js-yaml.",
+      "rootCause": "js-yaml version has a known security advisory.",
+      "impact": "Build-time dependency advisory in js-yaml.",
+      "recommendation": "Run 'npm audit fix' to resolve.",
+      "cwe": "CWE-1104",
+      "owasp": "A06 - Vulnerable and Outdated Components",
+      "evidence": "js-yaml: high"
+    },
+    {
+      "id": "WEB-0008",
+      "severity": "MEDIUM",
       "category": "Dependencies / next",
       "file": "/package.json",
       "function": "N/A",
       "line": 1,
-      "description": "npm audit found MODERATE severity vulnerability in next.",
-      "rootCause": "next version has a known security vulnerability.",
-      "impact": "Dependency vulnerability in next may be exploitable depending on usage.",
+      "description": "npm audit advisory for dev/build dependency next.",
+      "rootCause": "next version has a known security advisory.",
+      "impact": "Build-time dependency advisory in next.",
       "recommendation": "Run 'npm audit fix' to resolve.",
       "cwe": "CWE-1104",
       "owasp": "A06 - Vulnerable and Outdated Components",
-      "evidence": "next: moderate"
+      "evidence": "next: high"
     },
     {
-      "id": "WEB-0007",
+      "id": "WEB-0009",
       "severity": "MODERATE",
       "category": "Dependencies / postcss",
       "file": "/package.json",
       "function": "N/A",
       "line": 1,
-      "description": "npm audit found MODERATE severity vulnerability in postcss.",
-      "rootCause": "postcss version has a known security vulnerability.",
-      "impact": "Dependency vulnerability in postcss may be exploitable depending on usage.",
+      "description": "npm audit advisory for dev/build dependency postcss.",
+      "rootCause": "postcss version has a known security advisory.",
+      "impact": "Build-time dependency advisory in postcss.",
       "recommendation": "Run 'npm audit fix' to resolve.",
       "cwe": "CWE-1104",
       "owasp": "A06 - Vulnerable and Outdated Components",
       "evidence": "postcss: moderate"
+    },
+    {
+      "id": "WEB-0010",
+      "severity": "MODERATE",
+      "category": "Dependencies / protobufjs",
+      "file": "/package.json",
+      "function": "N/A",
+      "line": 1,
+      "description": "npm audit advisory for dev/build dependency protobufjs.",
+      "rootCause": "protobufjs version has a known security advisory.",
+      "impact": "Build-time dependency advisory in protobufjs.",
+      "recommendation": "Run 'npm audit fix' to resolve.",
+      "cwe": "CWE-1104",
+      "owasp": "A06 - Vulnerable and Outdated Components",
+      "evidence": "protobufjs: moderate"
+    },
+    {
+      "id": "WEB-0011",
+      "severity": "MEDIUM",
+      "category": "Dependencies / sharp",
+      "file": "/package.json",
+      "function": "N/A",
+      "line": 1,
+      "description": "npm audit advisory for dev/build dependency sharp.",
+      "rootCause": "sharp version has a known security advisory.",
+      "impact": "Build-time dependency advisory in sharp.",
+      "recommendation": "Run 'npm audit fix' to resolve.",
+      "cwe": "CWE-1104",
+      "owasp": "A06 - Vulnerable and Outdated Components",
+      "evidence": "sharp: high"
     }
   ],
   "depFindings": [
@@ -124,14 +184,34 @@
       "recommendation": "Run 'npm audit' and update to the latest stable version of firebase."
     },
     {
-      "package": "next",
-      "installedVersion": "9.3.4-canary.0 - 16.3.0-canary.5",
+      "package": "brace-expansion",
+      "installedVersion": "<1.1.16 || >=3.0.0 <5.0.7",
       "latestVersion": "Fix available",
-      "severity": "MODERATE",
-      "description": "next: postcss",
+      "severity": "HIGH",
+      "description": "brace-expansion: brace-expansion: DoS via exponential-time expansion of consecutive non-expanding {} groups, brace-expansion: DoS via exponential-time expansion of consecutive non-expanding {} groups",
+      "recommendation": "Run 'npm audit fix' or update brace-expansion to the fixed version.",
+      "cwe": "CWE-1104",
+      "via": "https://github.com/advisories/GHSA-3jxr-9vmj-r5cp, https://github.com/advisories/GHSA-3jxr-9vmj-r5cp"
+    },
+    {
+      "package": "js-yaml",
+      "installedVersion": "4.0.0 - 4.2.0",
+      "latestVersion": "Fix available",
+      "severity": "HIGH",
+      "description": "js-yaml: js-yaml: YAML merge-key chains can force quadratic CPU consumption",
+      "recommendation": "Run 'npm audit fix' or update js-yaml to the fixed version.",
+      "cwe": "CWE-1104",
+      "via": "https://github.com/advisories/GHSA-52cp-r559-cp3m"
+    },
+    {
+      "package": "next",
+      "installedVersion": "9.3.4-canary.0 - 16.3.0-preview.7",
+      "latestVersion": "Fix available",
+      "severity": "HIGH",
+      "description": "next: postcss, sharp",
       "recommendation": "Run 'npm audit fix' or update next to the fixed version.",
       "cwe": "CWE-1104",
-      "via": "postcss"
+      "via": "postcss, sharp"
     },
     {
       "package": "postcss",
@@ -142,6 +222,26 @@
       "recommendation": "Run 'npm audit fix' or update postcss to the fixed version.",
       "cwe": "CWE-1104",
       "via": "https://github.com/advisories/GHSA-qx2v-qp2m-jg93"
+    },
+    {
+      "package": "protobufjs",
+      "installedVersion": "7.5.0 - 7.6.4",
+      "latestVersion": "Fix available",
+      "severity": "MODERATE",
+      "description": "protobufjs: protobufjs: Denial of Service via infinite loop in .proto option parsing",
+      "recommendation": "Run 'npm audit fix' or update protobufjs to the fixed version.",
+      "cwe": "CWE-1104",
+      "via": "https://github.com/advisories/GHSA-j3f2-48v5-ccww"
+    },
+    {
+      "package": "sharp",
+      "installedVersion": "<0.35.0",
+      "latestVersion": "Fix available",
+      "severity": "HIGH",
+      "description": "sharp: sharp inherited vulnerabilities in libvips: CVE-2026-33327, CVE-2026-33328, CVE-2026-35590, CVE-2026-35591",
+      "recommendation": "Run 'npm audit fix' or update sharp to the fixed version.",
+      "cwe": "CWE-1104",
+      "via": "https://github.com/advisories/GHSA-f88m-g3jw-g9cj"
     }
   ],
   "xlsxData": {
@@ -165,16 +265,16 @@
         "id": "WEB-0002",
         "severity": "MEDIUM",
         "category": "Authorization / Client-Side Auth Guard",
-        "file": "/src/app/(dashboard)/trips/[id]/page.tsx",
+        "file": "/src/app/(dashboard)/trips/[id]/TripDetailClient.tsx",
         "function": "DashboardLayout",
-        "line": 63,
+        "line": 61,
         "description": "Route protection is implemented client-side only using useEffect. This creates a brief window where protected content may flash before redirect.",
         "rootCause": "Authentication guard uses useEffect + router.push pattern which runs after initial render. A fast network or cached response could expose protected routes momentarily.",
         "impact": "Protected page content may briefly flash to unauthenticated users. Does not provide true server-side protection. Search engine crawlers could index protected content.",
         "recommendation": "Implement server-side auth using Next.js middleware (middleware.ts) to redirect unauthenticated users before any content is served. Use Firebase Admin to verify tokens in middleware.",
         "cwe": "CWE-285",
         "owasp": "A01 - Broken Access Control",
-        "evidence": "useEffect-based auth guard in \\src\\app\\(dashboard)\\trips\\[id]\\page.tsx"
+        "evidence": "useEffect-based auth guard in \\src\\app\\(dashboard)\\trips\\[id]\\TripDetailClient.tsx"
       },
       {
         "id": "WEB-0003",
@@ -223,33 +323,93 @@
       },
       {
         "id": "WEB-0006",
-        "severity": "MODERATE",
+        "severity": "MEDIUM",
+        "category": "Dependencies / brace-expansion",
+        "file": "/package.json",
+        "function": "N/A",
+        "line": 1,
+        "description": "npm audit advisory for dev/build dependency brace-expansion.",
+        "rootCause": "brace-expansion version has a known security advisory.",
+        "impact": "Build-time dependency advisory in brace-expansion.",
+        "recommendation": "Run 'npm audit fix' to resolve.",
+        "cwe": "CWE-1104",
+        "owasp": "A06 - Vulnerable and Outdated Components",
+        "evidence": "brace-expansion: high"
+      },
+      {
+        "id": "WEB-0007",
+        "severity": "MEDIUM",
+        "category": "Dependencies / js-yaml",
+        "file": "/package.json",
+        "function": "N/A",
+        "line": 1,
+        "description": "npm audit advisory for dev/build dependency js-yaml.",
+        "rootCause": "js-yaml version has a known security advisory.",
+        "impact": "Build-time dependency advisory in js-yaml.",
+        "recommendation": "Run 'npm audit fix' to resolve.",
+        "cwe": "CWE-1104",
+        "owasp": "A06 - Vulnerable and Outdated Components",
+        "evidence": "js-yaml: high"
+      },
+      {
+        "id": "WEB-0008",
+        "severity": "MEDIUM",
         "category": "Dependencies / next",
         "file": "/package.json",
         "function": "N/A",
         "line": 1,
-        "description": "npm audit found MODERATE severity vulnerability in next.",
-        "rootCause": "next version has a known security vulnerability.",
-        "impact": "Dependency vulnerability in next may be exploitable depending on usage.",
+        "description": "npm audit advisory for dev/build dependency next.",
+        "rootCause": "next version has a known security advisory.",
+        "impact": "Build-time dependency advisory in next.",
         "recommendation": "Run 'npm audit fix' to resolve.",
         "cwe": "CWE-1104",
         "owasp": "A06 - Vulnerable and Outdated Components",
-        "evidence": "next: moderate"
+        "evidence": "next: high"
       },
       {
-        "id": "WEB-0007",
+        "id": "WEB-0009",
         "severity": "MODERATE",
         "category": "Dependencies / postcss",
         "file": "/package.json",
         "function": "N/A",
         "line": 1,
-        "description": "npm audit found MODERATE severity vulnerability in postcss.",
-        "rootCause": "postcss version has a known security vulnerability.",
-        "impact": "Dependency vulnerability in postcss may be exploitable depending on usage.",
+        "description": "npm audit advisory for dev/build dependency postcss.",
+        "rootCause": "postcss version has a known security advisory.",
+        "impact": "Build-time dependency advisory in postcss.",
         "recommendation": "Run 'npm audit fix' to resolve.",
         "cwe": "CWE-1104",
         "owasp": "A06 - Vulnerable and Outdated Components",
         "evidence": "postcss: moderate"
+      },
+      {
+        "id": "WEB-0010",
+        "severity": "MODERATE",
+        "category": "Dependencies / protobufjs",
+        "file": "/package.json",
+        "function": "N/A",
+        "line": 1,
+        "description": "npm audit advisory for dev/build dependency protobufjs.",
+        "rootCause": "protobufjs version has a known security advisory.",
+        "impact": "Build-time dependency advisory in protobufjs.",
+        "recommendation": "Run 'npm audit fix' to resolve.",
+        "cwe": "CWE-1104",
+        "owasp": "A06 - Vulnerable and Outdated Components",
+        "evidence": "protobufjs: moderate"
+      },
+      {
+        "id": "WEB-0011",
+        "severity": "MEDIUM",
+        "category": "Dependencies / sharp",
+        "file": "/package.json",
+        "function": "N/A",
+        "line": 1,
+        "description": "npm audit advisory for dev/build dependency sharp.",
+        "rootCause": "sharp version has a known security advisory.",
+        "impact": "Build-time dependency advisory in sharp.",
+        "recommendation": "Run 'npm audit fix' to resolve.",
+        "cwe": "CWE-1104",
+        "owasp": "A06 - Vulnerable and Outdated Components",
+        "evidence": "sharp: high"
       }
     ],
     "dependencies": [
@@ -270,14 +430,34 @@
         "recommendation": "Run 'npm audit' and update to the latest stable version of firebase."
       },
       {
-        "package": "next",
-        "installedVersion": "9.3.4-canary.0 - 16.3.0-canary.5",
+        "package": "brace-expansion",
+        "installedVersion": "<1.1.16 || >=3.0.0 <5.0.7",
         "latestVersion": "Fix available",
-        "severity": "MODERATE",
-        "description": "next: postcss",
+        "severity": "HIGH",
+        "description": "brace-expansion: brace-expansion: DoS via exponential-time expansion of consecutive non-expanding {} groups, brace-expansion: DoS via exponential-time expansion of consecutive non-expanding {} groups",
+        "recommendation": "Run 'npm audit fix' or update brace-expansion to the fixed version.",
+        "cwe": "CWE-1104",
+        "via": "https://github.com/advisories/GHSA-3jxr-9vmj-r5cp, https://github.com/advisories/GHSA-3jxr-9vmj-r5cp"
+      },
+      {
+        "package": "js-yaml",
+        "installedVersion": "4.0.0 - 4.2.0",
+        "latestVersion": "Fix available",
+        "severity": "HIGH",
+        "description": "js-yaml: js-yaml: YAML merge-key chains can force quadratic CPU consumption",
+        "recommendation": "Run 'npm audit fix' or update js-yaml to the fixed version.",
+        "cwe": "CWE-1104",
+        "via": "https://github.com/advisories/GHSA-52cp-r559-cp3m"
+      },
+      {
+        "package": "next",
+        "installedVersion": "9.3.4-canary.0 - 16.3.0-preview.7",
+        "latestVersion": "Fix available",
+        "severity": "HIGH",
+        "description": "next: postcss, sharp",
         "recommendation": "Run 'npm audit fix' or update next to the fixed version.",
         "cwe": "CWE-1104",
-        "via": "postcss"
+        "via": "postcss, sharp"
       },
       {
         "package": "postcss",
@@ -288,12 +468,32 @@
         "recommendation": "Run 'npm audit fix' or update postcss to the fixed version.",
         "cwe": "CWE-1104",
         "via": "https://github.com/advisories/GHSA-qx2v-qp2m-jg93"
+      },
+      {
+        "package": "protobufjs",
+        "installedVersion": "7.5.0 - 7.6.4",
+        "latestVersion": "Fix available",
+        "severity": "MODERATE",
+        "description": "protobufjs: protobufjs: Denial of Service via infinite loop in .proto option parsing",
+        "recommendation": "Run 'npm audit fix' or update protobufjs to the fixed version.",
+        "cwe": "CWE-1104",
+        "via": "https://github.com/advisories/GHSA-j3f2-48v5-ccww"
+      },
+      {
+        "package": "sharp",
+        "installedVersion": "<0.35.0",
+        "latestVersion": "Fix available",
+        "severity": "HIGH",
+        "description": "sharp: sharp inherited vulnerabilities in libvips: CVE-2026-33327, CVE-2026-33328, CVE-2026-35590, CVE-2026-35591",
+        "recommendation": "Run 'npm audit fix' or update sharp to the fixed version.",
+        "cwe": "CWE-1104",
+        "via": "https://github.com/advisories/GHSA-f88m-g3jw-g9cj"
       }
     ],
     "riskSummary": {
       "CRITICAL": 0,
       "HIGH": 0,
-      "MEDIUM": 5,
+      "MEDIUM": 9,
       "LOW": 0,
       "INFO": 0,
       "MODERATE": 2
@@ -371,19 +571,19 @@
       "typescript": "^5"
     }
   },
-  "timestamp": "2026-07-19T17:28:10.776Z",
+  "timestamp": "2026-07-22T16:57:12.501Z",
   "score": {
-    "score": 81,
+    "score": 75,
     "riskLevel": "MEDIUM",
     "distribution": {
       "critical": 0,
       "high": 0,
-      "medium": 5,
+      "medium": 9,
       "low": 0,
       "info": 0,
       "CRITICAL": 0,
       "HIGH": 0,
-      "MEDIUM": 5,
+      "MEDIUM": 9,
       "LOW": 0,
       "INFO": 0
     },
@@ -391,7 +591,7 @@
       "authCoverage": 1,
       "rateLimitCoverage": 1,
       "securityHeadersCoverage": 1,
-      "dependencyHealth": 0.8,
+      "dependencyHealth": 0.4,
       "configSafety": 1
     }
   }

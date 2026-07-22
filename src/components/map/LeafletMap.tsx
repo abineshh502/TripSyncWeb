@@ -297,7 +297,6 @@ export default function LeafletMap({
     });
 
     return () => { cancelled = true; };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     JSON.stringify(spots),
     builderStart ? `${builderStart.latitude},${builderStart.longitude}` : null,

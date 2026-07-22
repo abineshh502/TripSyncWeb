@@ -12,6 +12,9 @@ node_modules
 # Build outputs
 out/
 dist/
+*.tsbuildinfo
+failures.txt
+__pycache__/
 
 # IDE
 .idea/
@@ -19,4 +22,4 @@ dist/
 *.swp
 
 # Logs
-*.log
+*.log

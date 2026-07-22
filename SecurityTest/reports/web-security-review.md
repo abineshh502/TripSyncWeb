@@ -1,6 +1,6 @@
 # TripSync Web — Security Review Report
 
-**Generated:** 2026-07-19T17:28:16.115Z  
+**Generated:** 2026-07-22T16:57:17.464Z  
 **Scanner:** TripSync Web SAST v1.0.0  
 **Target:** TripSync Next.js Web Application  
 **Technology Stack:** nextjs, react, typescript, tailwindcss, firebase, reactHookForm, zod, framerMotion
@@ -13,19 +13,19 @@
 |----------|-------|
 | 🔴 CRITICAL | 0 |
 | 🟠 HIGH | 0 |
-| 🟡 MEDIUM | 5 |
+| 🟡 MEDIUM | 9 |
 | 🟢 LOW | 0 |
 | ℹ️ INFO | 2 |
-| **TOTAL** | **7** |
+| **TOTAL** | **11** |
 
-**Overall Risk Level:** 🟡 LOW RISK  
-**Risk Score:** 20/100
+**Overall Risk Level:** 🟠 MEDIUM RISK  
+**Risk Score:** 36/100
 
 ---
 
 ## Findings
 
-### 🟡 MEDIUM Severity (5)
+### 🟡 MEDIUM Severity (9)
 
 #### WEB-0001 — Route protection is implemented client-side only using useEffect. This creates a...
 
@@ -62,9 +62,9 @@ useEffect-based auth guard in \src\app\(dashboard)\layout.tsx
 | **Finding ID** | `WEB-0002` |
 | **Severity** | MEDIUM |
 | **Category** | Authorization / Client-Side Auth Guard |
-| **File** | `/src/app/(dashboard)/trips/[id]/page.tsx` |
+| **File** | `/src/app/(dashboard)/trips/[id]/TripDetailClient.tsx` |
 | **Function** | `DashboardLayout` |
-| **Line** | 63 |
+| **Line** | 61 |
 | **CWE** | [CWE-285](https://cwe.mitre.org/data/definitions/285.html) |
 | **OWASP** | A01 - Broken Access Control |
 
@@ -78,7 +78,7 @@ useEffect-based auth guard in \src\app\(dashboard)\layout.tsx
 
 **Evidence:**
 ```
-useEffect-based auth guard in \src\app\(dashboard)\trips\[id]\page.tsx
+useEffect-based auth guard in \src\app\(dashboard)\trips\[id]\TripDetailClient.tsx
 ```
 
 ---
@@ -167,14 +167,68 @@ const response = await fetch(`${API_BASE_URL}/otp/verify`, {
 
 ---
 
-### ℹ️ INFO Severity (2)
-
-#### WEB-0006 — npm audit found MODERATE severity vulnerability in next....
+#### WEB-0006 — npm audit advisory for dev/build dependency brace-expansion....
 
 | Field | Value |
 |-------|-------|
 | **Finding ID** | `WEB-0006` |
-| **Severity** | MODERATE |
+| **Severity** | MEDIUM |
+| **Category** | Dependencies / brace-expansion |
+| **File** | `/package.json` |
+| **Function** | `N/A` |
+| **Line** | 1 |
+| **CWE** | [CWE-1104](https://cwe.mitre.org/data/definitions/1104.html) |
+| **OWASP** | A06 - Vulnerable and Outdated Components |
+
+**Description:** npm audit advisory for dev/build dependency brace-expansion.
+
+**Root Cause:** brace-expansion version has a known security advisory.
+
+**Impact:** Build-time dependency advisory in brace-expansion.
+
+**Recommendation:** Run 'npm audit fix' to resolve.
+
+**Evidence:**
+```
+brace-expansion: high
+```
+
+---
+
+#### WEB-0007 — npm audit advisory for dev/build dependency js-yaml....
+
+| Field | Value |
+|-------|-------|
+| **Finding ID** | `WEB-0007` |
+| **Severity** | MEDIUM |
+| **Category** | Dependencies / js-yaml |
+| **File** | `/package.json` |
+| **Function** | `N/A` |
+| **Line** | 1 |
+| **CWE** | [CWE-1104](https://cwe.mitre.org/data/definitions/1104.html) |
+| **OWASP** | A06 - Vulnerable and Outdated Components |
+
+**Description:** npm audit advisory for dev/build dependency js-yaml.
+
+**Root Cause:** js-yaml version has a known security advisory.
+
+**Impact:** Build-time dependency advisory in js-yaml.
+
+**Recommendation:** Run 'npm audit fix' to resolve.
+
+**Evidence:**
+```
+js-yaml: high
+```
+
+---
+
+#### WEB-0008 — npm audit advisory for dev/build dependency next....
+
+| Field | Value |
+|-------|-------|
+| **Finding ID** | `WEB-0008` |
+| **Severity** | MEDIUM |
 | **Category** | Dependencies / next |
 | **File** | `/package.json` |
 | **Function** | `N/A` |
@@ -182,26 +236,56 @@ const response = await fetch(`${API_BASE_URL}/otp/verify`, {
 | **CWE** | [CWE-1104](https://cwe.mitre.org/data/definitions/1104.html) |
 | **OWASP** | A06 - Vulnerable and Outdated Components |
 
-**Description:** npm audit found MODERATE severity vulnerability in next.
+**Description:** npm audit advisory for dev/build dependency next.
 
-**Root Cause:** next version has a known security vulnerability.
+**Root Cause:** next version has a known security advisory.
 
-**Impact:** Dependency vulnerability in next may be exploitable depending on usage.
+**Impact:** Build-time dependency advisory in next.
 
 **Recommendation:** Run 'npm audit fix' to resolve.
 
 **Evidence:**
 ```
-next: moderate
+next: high
 ```
 
 ---
 
-#### WEB-0007 — npm audit found MODERATE severity vulnerability in postcss....
+#### WEB-0011 — npm audit advisory for dev/build dependency sharp....
 
 | Field | Value |
 |-------|-------|
-| **Finding ID** | `WEB-0007` |
+| **Finding ID** | `WEB-0011` |
+| **Severity** | MEDIUM |
+| **Category** | Dependencies / sharp |
+| **File** | `/package.json` |
+| **Function** | `N/A` |
+| **Line** | 1 |
+| **CWE** | [CWE-1104](https://cwe.mitre.org/data/definitions/1104.html) |
+| **OWASP** | A06 - Vulnerable and Outdated Components |
+
+**Description:** npm audit advisory for dev/build dependency sharp.
+
+**Root Cause:** sharp version has a known security advisory.
+
+**Impact:** Build-time dependency advisory in sharp.
+
+**Recommendation:** Run 'npm audit fix' to resolve.
+
+**Evidence:**
+```
+sharp: high
+```
+
+---
+
+### ℹ️ INFO Severity (2)
+
+#### WEB-0009 — npm audit advisory for dev/build dependency postcss....
+
+| Field | Value |
+|-------|-------|
+| **Finding ID** | `WEB-0009` |
 | **Severity** | MODERATE |
 | **Category** | Dependencies / postcss |
 | **File** | `/package.json` |
@@ -210,11 +294,11 @@ next: moderate
 | **CWE** | [CWE-1104](https://cwe.mitre.org/data/definitions/1104.html) |
 | **OWASP** | A06 - Vulnerable and Outdated Components |
 
-**Description:** npm audit found MODERATE severity vulnerability in postcss.
+**Description:** npm audit advisory for dev/build dependency postcss.
 
-**Root Cause:** postcss version has a known security vulnerability.
+**Root Cause:** postcss version has a known security advisory.
 
-**Impact:** Dependency vulnerability in postcss may be exploitable depending on usage.
+**Impact:** Build-time dependency advisory in postcss.
 
 **Recommendation:** Run 'npm audit fix' to resolve.
 
@@ -225,14 +309,46 @@ postcss: moderate
 
 ---
 
+#### WEB-0010 — npm audit advisory for dev/build dependency protobufjs....
+
+| Field | Value |
+|-------|-------|
+| **Finding ID** | `WEB-0010` |
+| **Severity** | MODERATE |
+| **Category** | Dependencies / protobufjs |
+| **File** | `/package.json` |
+| **Function** | `N/A` |
+| **Line** | 1 |
+| **CWE** | [CWE-1104](https://cwe.mitre.org/data/definitions/1104.html) |
+| **OWASP** | A06 - Vulnerable and Outdated Components |
+
+**Description:** npm audit advisory for dev/build dependency protobufjs.
+
+**Root Cause:** protobufjs version has a known security advisory.
+
+**Impact:** Build-time dependency advisory in protobufjs.
+
+**Recommendation:** Run 'npm audit fix' to resolve.
+
+**Evidence:**
+```
+protobufjs: moderate
+```
+
+---
+
 ## Dependency Review
 
 | Package | Installed | Latest | Severity | Notes |
 |---------|-----------|--------|----------|-------|
 | next | 16.2.9 | 15.x | INFO | Verify this is the latest stable Next.js version. Check https://nextjs.org/blog for security advisories. |
 | firebase | ^12.14.0 | 11.x | INFO | Firebase SDK version should be kept current. Check Firebase release notes for security patches. |
-| next | 9.3.4-canary.0 - 16.3.0-canary.5 | Fix available | MODERATE | next: postcss |
+| brace-expansion | <1.1.16 || >=3.0.0 <5.0.7 | Fix available | HIGH | brace-expansion: brace-expansion: DoS via exponential-time expansion of consecutive non-expanding {} groups, brace-expansion: DoS via exponential-time expansion of consecutive non-expanding {} groups |
+| js-yaml | 4.0.0 - 4.2.0 | Fix available | HIGH | js-yaml: js-yaml: YAML merge-key chains can force quadratic CPU consumption |
+| next | 9.3.4-canary.0 - 16.3.0-preview.7 | Fix available | HIGH | next: postcss, sharp |
 | postcss | <8.5.10 | Fix available | MODERATE | postcss: PostCSS has XSS via Unescaped </style> in its CSS Stringify Output |
+| protobufjs | 7.5.0 - 7.6.4 | Fix available | MODERATE | protobufjs: protobufjs: Denial of Service via infinite loop in .proto option parsing |
+| sharp | <0.35.0 | Fix available | HIGH | sharp: sharp inherited vulnerabilities in libvips: CVE-2026-33327, CVE-2026-33328, CVE-2026-35590, CVE-2026-35591 |
 
 ---
 

@@ -60,11 +60,13 @@ function generateXLSX(scanData) {
     "Description", "Root Cause", "Impact", "Recommendation", "CWE", "OWASP", "Evidence"
   ];
 
+  const safeStr = (val) => String(val || "").substring(0, 30000);
+
   const findingsData = [findingsHeaders];
   for (const f of findings) {
     findingsData.push([
-      f.id, f.severity, f.category, f.file, f.function, f.line,
-      f.description, f.rootCause, f.impact, f.recommendation, f.cwe, f.owasp, f.evidence || ""
+      safeStr(f.id), safeStr(f.severity), safeStr(f.category), safeStr(f.file), safeStr(f.function), safeStr(f.line),
+      safeStr(f.description), safeStr(f.rootCause), safeStr(f.impact), safeStr(f.recommendation), safeStr(f.cwe), safeStr(f.owasp), safeStr(f.evidence)
     ]);
   }
 

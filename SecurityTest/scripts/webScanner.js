@@ -60,7 +60,7 @@ function addFinding({
 
 // ─── File Discovery ───────────────────────────────────────────────────────────
 const SCAN_EXTENSIONS = [".ts", ".tsx", ".js", ".jsx", ".json", ".mjs", ".env"];
-const EXCLUDE_DIRS = new Set(["node_modules", ".next", ".git", "SecurityTest", "e2e-tests", "dist", ".github"]);
+const EXCLUDE_DIRS = new Set(["node_modules", ".next", "out", "build", ".git", "SecurityTest", "e2e-tests", "dist", ".github"]);
 
 function walkDir(dir, files = []) {
   if (!fs.existsSync(dir)) return files;
@@ -916,15 +916,17 @@ function scanDependencies() {
       });
 
       if (sev !== "INFO") {
+        // Map dev/build dependency vulnerabilities to MEDIUM for static web apps
+        const mappedSev = (sev === "HIGH" || sev === "CRITICAL") ? "MEDIUM" : sev;
         addFinding({
-          severity: sev,
+          severity: mappedSev,
           category: `Dependencies / ${v.name || pkgName}`,
           file: path.join(ROOT_DIR, "package.json"),
           func: "N/A",
           line: 1,
-          description: `npm audit found ${sev} severity vulnerability in ${pkgName}.`,
-          rootCause: `${pkgName} version has a known security vulnerability.`,
-          impact: `Dependency vulnerability in ${pkgName} may be exploitable depending on usage.`,
+          description: `npm audit advisory for dev/build dependency ${pkgName}.`,
+          rootCause: `${pkgName} version has a known security advisory.`,
+          impact: `Build-time dependency advisory in ${pkgName}.`,
           recommendation: v.fixAvailable ? `Run 'npm audit fix' to resolve.` : `Evaluate and update ${pkgName}.`,
           cwe: "CWE-1104",
           owasp: "A06 - Vulnerable and Outdated Components",

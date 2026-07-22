@@ -65,11 +65,18 @@ const nextConfig: NextConfig = {
     // ignoreBuildErrors: false  ← default; explicitly not setting true
   },
 
-  // ESLint errors are NOT suppressed in production builds
-  // WEB-0011: ignoreDuringBuilds REMOVED — FIXED
-  eslint: {
-    // ignoreDuringBuilds: false  ← default
+  // Enable static export for GitHub Pages deployment
+  output: "export",
+  trailingSlash: true,
+  images: {
+    unoptimized: true,
   },
+  ...(process.env.NEXT_PUBLIC_BASE_PATH
+    ? {
+        basePath: process.env.NEXT_PUBLIC_BASE_PATH,
+        assetPrefix: process.env.NEXT_PUBLIC_BASE_PATH,
+      }
+    : {}),
 
   async headers() {
     return [

@@ -1,0 +1,102 @@
+name: TripSyncWeb Build, Test & GitHub Pages Deployment
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build-test-deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python Environment
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install Python Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r e2e-tests/requirements.txt
+
+      - name: Set up Node.js Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install Node Dependencies
+        run: |
+          npm ci
+
+      - name: Code Quality & ESLint Audit
+        run: |
+          npm run lint
+
+      - name: TypeScript Type Checking
+        run: |
+          npm run type-check
+
+      - name: Execute Web Security Scanner
+        run: |
+          node SecurityTest/scripts/generateWebSecuritySuite.js
+
+      - name: Build Next.js Static Export
+        env:
+          NEXT_PUBLIC_API_URL: https://tripsync-backend-ra7p.onrender.com
+          NEXT_PUBLIC_BASE_PATH: /TripSyncWeb
+        run: |
+          npm run build
+
+      - name: Execute E2E & API Verification Tests
+        env:
+          NEXT_PUBLIC_API_URL: https://tripsync-backend-ra7p.onrender.com
+        run: |
+          python e2e-tests/run_tests.py
+
+      - name: Upload Test Reports Artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: TripSync-Executive-Test-Reports
+          path: |
+            execution-report.html
+            execution-report.md
+            execution-report.json
+            TripSync_TestReport.xlsx
+            SecurityTest/reports/web-security-findings.xlsx
+            SecurityTest/reports/web-security-review.md
+            SecurityTest/reports/web-executive-summary.md
+
+      - name: Setup GitHub Pages Static Deployment
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages Artifact
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './out'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+        uses: actions/deploy-pages@v4

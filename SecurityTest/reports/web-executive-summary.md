@@ -1,16 +1,16 @@
 # TripSync Web — Executive Security Summary
 
-**Date:** 2026-07-19T17:28:16.117Z  
+**Date:** 2026-07-22T16:57:17.466Z  
 **Application:** TripSync Web (Next.js 16.2.9)
 
 ---
 
 ## Security Posture: Good
 
-**Security Score:** 81/100  
+**Security Score:** 75/100  
 **Risk Level:** MEDIUM  
 
-The TripSync Web application was analyzed using SAST techniques including regex analysis, semantic pattern matching, and configuration review. A total of **7 security findings** were identified across authentication, authorization, secrets management, security headers, and dependency hygiene.
+The TripSync Web application was analyzed using SAST techniques including regex analysis, semantic pattern matching, and configuration review. A total of **11 security findings** were identified across authentication, authorization, secrets management, security headers, and dependency hygiene.
 
 ## Risk Summary
 
@@ -18,7 +18,7 @@ The TripSync Web application was analyzed using SAST techniques including regex 
 |----------|-------|
 | 🔴 Critical | 0 |
 | 🟠 High | 0 |
-| 🟡 Medium | 5 |
+| 🟡 Medium | 9 |
 | 🟢 Low | 0 |
 | ℹ️ Info | 0 |
 
@@ -28,7 +28,7 @@ The TripSync Web application was analyzed using SAST techniques including regex 
 |---------------|----------------|
 | Authentication Coverage | 100% |
 | Security Headers Coverage | 100% |
-| Dependency Health | 80% |
+| Dependency Health | 40% |
 | Configuration Safety | 100% |
 
 ## Top Risks
