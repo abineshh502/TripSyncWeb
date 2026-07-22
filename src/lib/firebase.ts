@@ -42,15 +42,15 @@ if (typeof window !== "undefined" || process.env.NODE_ENV === "development") {
   }
 }
 
-// ─── Firebase Configuration (SSR & Static Export safe) ────────────────────────
+// ─── Firebase Configuration (Production project tripsync-8e63e) ─────────────
 const firebaseConfig = {
-  apiKey:            process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "AIzaSyB_DummyKeyForStaticExportPrerender12345",
+  apiKey:            process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "AIzaSyDpBTv3re8BuZR-i25ZeuKsUykN1DYcxNo",
   authDomain:        process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || "tripsync-8e63e.firebaseapp.com",
   projectId:         process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "tripsync-8e63e",
-  storageBucket:     process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || "tripsync-8e63e.appspot.com",
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || "100000000000",
-  appId:             process.env.NEXT_PUBLIC_FIREBASE_APP_ID || "1:100000000000:web:dummyappid12345",
-  measurementId:     process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID, // optional
+  storageBucket:     process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || "tripsync-8e63e.firebasestorage.app",
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || "167694267883",
+  appId:             process.env.NEXT_PUBLIC_FIREBASE_APP_ID || "1:167694267883:web:61bd7d4f75be2ad2a915ae",
+  measurementId:     process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID || "G-QN6RB14ZGF",
 };
 
 // ─── Initialize Firebase (SSR-safe — singleton) ────────────────────────────────
