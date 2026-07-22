@@ -19,13 +19,12 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: '20'
+          cache: 'npm'
 
       - name: Install Node Dependencies
         run: |
-          npm install xlsx exceljs --no-save
-          # Configure NODE_PATH to point to local node_modules
-          echo "NODE_PATH=$(pwd)/node_modules" >> $GITHUB_ENV
+          npm ci
 
       - name: Execute Security Scanner
         run: |
