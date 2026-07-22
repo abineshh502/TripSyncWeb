@@ -45,7 +45,7 @@ jobs:
 
       - name: Install Node Dependencies
         run: |
-          npm ci
+              npm install --no-audit --no-fund
 
       - name: Code Quality & ESLint Audit
         run: |
