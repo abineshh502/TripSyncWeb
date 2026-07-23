@@ -34,6 +34,13 @@ import {
   Paperclip,
   Eye,
   Trash2,
+  Download,
+  ExternalLink,
+  Pencil,
+  Clock,
+  Receipt,
+  DollarSign,
+  UserCheck,
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { formatDate, formatCurrency } from "../../../../lib/utils";
@@ -78,6 +85,8 @@ export default function GroupDetailsPage() {
 
   const [expenseModalVisible, setExpenseModalVisible] = useState(false);
   const [editItineraryModalVisible, setEditItineraryModalVisible] = useState(false);
+  const [selectedExpenseDetail, setSelectedExpenseDetail] = useState<any | null>(null);
+  const [editExpenseModalVisible, setEditExpenseModalVisible] = useState(false);
 
   const [expenseAmount, setExpenseAmount] = useState("");
   const [expenseDesc, setExpenseDesc] = useState("");
@@ -89,7 +98,115 @@ export default function GroupDetailsPage() {
   const [isDraggingReceipt, setIsDraggingReceipt] = useState(false);
   const [viewReceiptUrl, setViewReceiptUrl] = useState<string | null>(null);
 
+  // Edit Expense form states
+  const [editExpenseAmount, setEditExpenseAmount] = useState("");
+  const [editExpenseDesc, setEditExpenseDesc] = useState("");
+  const [editExpenseCategory, setEditExpenseCategory] = useState("🍴 Food");
+  const [editExpensePaidBy, setEditExpensePaidBy] = useState("");
+  const [editExpenseSplitBetween, setEditExpenseSplitBetween] = useState<string[]>([]);
+  const [editReceiptImage, setEditReceiptImage] = useState("");
+
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const downloadReceiptFile = (url: string, filename?: string) => {
+    if (!url) return;
+    fetch(url)
+      .then((res) => res.blob())
+      .then((blob) => {
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = filename || "TripSync_Receipt.jpg";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        toast.success("Receipt image downloaded!");
+      })
+      .catch(() => {
+        window.open(url, "_blank");
+      });
+  };
+
+  const handleDeleteExpense = async (targetExp: any) => {
+    if (!group || !group.id) return;
+    if (!confirm(`Are you sure you want to delete "${targetExp.description || "this expense"}"?`)) return;
+
+    try {
+      const currentExpenses = group.expenses || [];
+      const updatedExpenses = currentExpenses.filter(
+        (e: any) =>
+          !(
+            e.createdAt === targetExp.createdAt &&
+            e.amount === targetExp.amount &&
+            e.description === targetExp.description
+          )
+      );
+
+      const groupRef = doc(db, "groups", group.id);
+      await updateDoc(groupRef, { expenses: updatedExpenses });
+      toast.success("Expense deleted successfully!");
+      setSelectedExpenseDetail(null);
+    } catch (err) {
+      console.error("Error deleting expense:", err);
+      toast.error("Failed to delete expense.");
+    }
+  };
+
+  const handleOpenEditExpense = (exp: any) => {
+    setEditExpenseAmount(String(exp.amount || ""));
+    setEditExpenseDesc(exp.description || "");
+    setEditExpenseCategory(exp.category || "🍴 Food");
+    setEditExpensePaidBy(exp.paidBy || (memberList[0] || "Traveler"));
+    setEditExpenseSplitBetween(exp.splitBetween || memberList);
+    setEditReceiptImage(exp.receiptImage || "");
+    setEditExpenseModalVisible(true);
+  };
+
+  const handleEditExpenseSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedExpenseDetail || !group || !group.id) return;
+
+    const costVal = Number(editExpenseAmount);
+    if (!editExpenseAmount || isNaN(costVal) || costVal <= 0) {
+      toast.error("Please enter a valid expense cost amount.");
+      return;
+    }
+    if (editExpenseSplitBetween.length === 0) {
+      toast.error("Select at least one member to split expenses.");
+      return;
+    }
+
+    try {
+      const currentExpenses = group.expenses || [];
+      const updatedExpenses = currentExpenses.map((expItem: any) => {
+        if (
+          expItem.createdAt === selectedExpenseDetail.createdAt &&
+          expItem.amount === selectedExpenseDetail.amount &&
+          expItem.description === selectedExpenseDetail.description
+        ) {
+          return {
+            ...expItem,
+            amount: costVal,
+            description: editExpenseDesc.trim() || `${editExpenseCategory} expense`,
+            category: editExpenseCategory,
+            paidBy: editExpensePaidBy,
+            splitBetween: editExpenseSplitBetween,
+            receiptImage: editReceiptImage || expItem.receiptImage || "",
+            updatedAt: new Date().toISOString(),
+          };
+        }
+        return expItem;
+      });
+
+      const groupRef = doc(db, "groups", group.id);
+      await updateDoc(groupRef, { expenses: updatedExpenses });
+      toast.success("Expense updated successfully!");
+      setEditExpenseModalVisible(false);
+      setSelectedExpenseDetail(null);
+    } catch (err) {
+      console.error("Error updating expense:", err);
+      toast.error("Failed to update expense.");
+    }
+  };
 
   const processReceiptFile = async (file: File) => {
     const validExtensions = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
@@ -926,20 +1043,31 @@ export default function GroupDetailsPage() {
                   <h3 className="text-white font-semibold text-sm">Spent Ledger Entries</h3>
                   <div className="space-y-3 max-h-[400px] overflow-y-auto pr-1">
                     {expensesList.map((exp: any, i: number) => (
-                      <div key={i} className="bg-slate-900/40 border border-white/5 p-4 rounded-xl flex items-center justify-between group">
+                      <div
+                        key={i}
+                        onClick={() => setSelectedExpenseDetail(exp)}
+                        className="bg-slate-900/40 border border-white/5 hover:border-teal-500/40 hover:bg-slate-900/80 p-4 rounded-xl flex items-center justify-between group cursor-pointer transition"
+                      >
                         <div className="flex items-center space-x-3.5">
-                          <span className="w-9 h-9 rounded-full bg-slate-950 flex items-center justify-center text-base border border-white/5">
+                          <span className="w-9 h-9 rounded-full bg-slate-950 flex items-center justify-center text-base border border-white/5 group-hover:border-teal-500/30 transition">
                             {CATEGORY_ICONS[exp.category] || "💸"}
                           </span>
                           <div>
-                            <p className="text-white text-xs font-bold">{exp.description}</p>
+                            <div className="flex items-center gap-2">
+                              <p className="text-white text-xs font-bold group-hover:text-teal-300 transition">{exp.description}</p>
+                              {exp.receiptImage && (
+                                <span className="px-1.5 py-0.5 rounded bg-teal-500/10 border border-teal-500/20 text-teal-400 text-[10px] font-semibold flex items-center gap-1">
+                                  <Paperclip className="h-3 w-3" /> Receipt
+                                </span>
+                              )}
+                            </div>
                             <span className="text-[10px] text-slate-500">
                               Paid by <span className="text-slate-300 font-medium">{exp.paidBy}</span> • split ({exp.splitBetween?.length || 1} people)
                             </span>
                           </div>
                         </div>
                         <div className="text-right">
-                          <span className="text-white font-bold text-sm block">{formatCurrency(exp.amount)}</span>
+                          <span className="text-white font-bold text-sm block group-hover:text-teal-300 transition">{formatCurrency(exp.amount)}</span>
                           <span className="text-[9px] text-slate-500 font-mono">{formatDate(exp.createdAt?.split("T")[0])}</span>
                         </div>
                       </div>
@@ -1388,6 +1516,262 @@ export default function GroupDetailsPage() {
                 Close Preview
               </button>
             </div>
+          </div>
+        </div>
+      )}
+      {selectedExpenseDetail && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md animate-in fade-in duration-200">
+          <div className="glass-panel max-w-lg w-full rounded-2xl border border-white/10 p-6 space-y-5 shadow-2xl max-h-[90vh] overflow-y-auto">
+            {/* Modal Header */}
+            <div className="flex justify-between items-start border-b border-white/10 pb-4">
+              <div className="flex items-center space-x-3">
+                <span className="w-10 h-10 rounded-xl bg-teal-500/10 border border-teal-500/20 flex items-center justify-center text-xl">
+                  {CATEGORY_ICONS[selectedExpenseDetail.category] || "💸"}
+                </span>
+                <div>
+                  <h2 className="text-base font-bold text-white leading-snug">{selectedExpenseDetail.description}</h2>
+                  <p className="text-slate-400 text-xs mt-0.5">
+                    Category: <span className="text-teal-400 font-medium">{selectedExpenseDetail.category}</span>
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setSelectedExpenseDetail(null)}
+                className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-white/5 transition"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            {/* Total Cost & Per Person Split */}
+            <div className="grid grid-cols-2 gap-3 bg-slate-950 border border-white/5 p-4 rounded-xl">
+              <div>
+                <span className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold block">Total Expense</span>
+                <span className="text-xl font-extrabold text-teal-400 mt-0.5 block">
+                  {formatCurrency(selectedExpenseDetail.amount)}
+                </span>
+              </div>
+              <div>
+                <span className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold block">Per Person Share</span>
+                <span className="text-xl font-extrabold text-emerald-400 mt-0.5 block">
+                  {formatCurrency(
+                    Number(
+                      (
+                        selectedExpenseDetail.amount /
+                        (selectedExpenseDetail.splitBetween?.length || 1)
+                      ).toFixed(2)
+                    )
+                  )}
+                </span>
+              </div>
+            </div>
+
+            {/* Metadata Badges */}
+            <div className="flex flex-wrap gap-2 text-xs">
+              <span className="bg-slate-900 border border-white/5 px-3 py-1.5 rounded-lg text-slate-300 flex items-center gap-1.5">
+                <Users className="h-3.5 w-3.5 text-teal-400" />
+                Group: <strong className="text-white">{group.groupName}</strong> ({group.code})
+              </span>
+              <span className="bg-slate-900 border border-white/5 px-3 py-1.5 rounded-lg text-slate-300 flex items-center gap-1.5">
+                <Clock className="h-3.5 w-3.5 text-teal-400" />
+                Logged: {formatDate(selectedExpenseDetail.createdAt?.split("T")[0])}
+              </span>
+            </div>
+
+            {/* Members Split Details */}
+            <div className="space-y-2.5">
+              <h4 className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+                <UserCheck className="h-4 w-4 text-teal-400" />
+                <span>Payment & Split Breakdown</span>
+              </h4>
+
+              <div className="bg-slate-900/60 border border-white/5 rounded-xl p-3 space-y-2">
+                <div className="flex justify-between items-center bg-teal-500/10 border border-teal-500/20 p-2.5 rounded-lg">
+                  <div className="flex items-center space-x-2">
+                    <span className="w-6 h-6 rounded-full bg-teal-500/20 text-teal-300 flex items-center justify-center text-xs font-bold">
+                      {selectedExpenseDetail.paidBy?.charAt(0).toUpperCase()}
+                    </span>
+                    <span className="text-white text-xs font-bold">{selectedExpenseDetail.paidBy}</span>
+                  </div>
+                  <span className="text-teal-400 text-xs font-bold bg-teal-500/20 px-2 py-0.5 rounded">
+                    Paid {formatCurrency(selectedExpenseDetail.amount)}
+                  </span>
+                </div>
+
+                <div className="pt-1 space-y-1.5">
+                  <span className="text-[11px] font-medium text-slate-400 block px-1">Split Between ({selectedExpenseDetail.splitBetween?.length || 0} members):</span>
+                  {(selectedExpenseDetail.splitBetween || []).map((m: string) => {
+                    const share = (selectedExpenseDetail.amount / (selectedExpenseDetail.splitBetween?.length || 1)).toFixed(2);
+                    return (
+                      <div key={m} className="flex justify-between items-center px-3 py-1.5 bg-slate-950/60 rounded-lg text-xs">
+                        <span className="text-slate-200 font-medium">{m}</span>
+                        <span className="text-slate-400 font-mono">Owes {formatCurrency(Number(share))}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+
+            {/* Receipt Image Attachment */}
+            <div className="space-y-2">
+              <h4 className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+                <Receipt className="h-4 w-4 text-teal-400" />
+                <span>Receipt Attachment</span>
+              </h4>
+
+              {selectedExpenseDetail.receiptImage ? (
+                <div className="bg-slate-900 border border-white/10 rounded-xl p-3 flex items-center justify-between">
+                  <div
+                    onClick={() => setViewReceiptUrl(selectedExpenseDetail.receiptImage)}
+                    className="flex items-center space-x-3 cursor-pointer group"
+                  >
+                    <div className="w-12 h-12 rounded-lg overflow-hidden border border-white/10 bg-slate-950 flex-shrink-0">
+                      <img
+                        src={selectedExpenseDetail.receiptImage}
+                        alt="Receipt"
+                        className="w-full h-full object-cover group-hover:scale-105 transition"
+                      />
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold text-white group-hover:text-teal-300 transition">View Full Receipt</p>
+                      <span className="text-[10px] text-slate-400 flex items-center gap-1 mt-0.5">
+                        <Eye className="h-3 w-3 text-teal-400" /> Click to enlarge
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center space-x-1.5">
+                    <button
+                      onClick={() => downloadReceiptFile(selectedExpenseDetail.receiptImage, `Receipt_${selectedExpenseDetail.description}.jpg`)}
+                      className="p-2 text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 rounded-lg text-xs font-semibold transition flex items-center gap-1"
+                      title="Download receipt"
+                    >
+                      <Download className="h-4 w-4 text-teal-400" />
+                    </button>
+                    <button
+                      onClick={() => window.open(selectedExpenseDetail.receiptImage, "_blank")}
+                      className="p-2 text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 rounded-lg text-xs font-semibold transition flex items-center gap-1"
+                      title="Open in new tab"
+                    >
+                      <ExternalLink className="h-4 w-4 text-teal-400" />
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="bg-slate-900/40 border border-white/5 rounded-xl p-4 text-center">
+                  <p className="text-slate-500 text-xs italic">No receipt image attached to this bill expense.</p>
+                </div>
+              )}
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex items-center space-x-2 pt-3 border-t border-white/10">
+              <button
+                type="button"
+                onClick={() => handleOpenEditExpense(selectedExpenseDetail)}
+                className="flex-1 bg-white/5 hover:bg-white/10 text-white rounded-xl py-2.5 text-xs font-semibold transition flex items-center justify-center gap-1.5"
+              >
+                <Pencil className="h-3.5 w-3.5 text-teal-400" />
+                Edit Expense
+              </button>
+              <button
+                type="button"
+                onClick={() => handleDeleteExpense(selectedExpenseDetail)}
+                className="bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-xl px-4 py-2.5 text-xs font-semibold transition flex items-center justify-center gap-1.5 border border-rose-500/20"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+                Delete
+              </button>
+              <button
+                type="button"
+                onClick={() => setSelectedExpenseDetail(null)}
+                className="bg-teal-500 hover:bg-teal-600 text-slate-950 font-bold rounded-xl px-5 py-2.5 text-xs transition"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {editExpenseModalVisible && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md animate-in fade-in duration-200">
+          <div className="glass-panel max-w-md w-full rounded-2xl border border-white/10 p-6 space-y-5 shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center border-b border-white/10 pb-4">
+              <h2 className="text-base font-bold text-white flex items-center gap-2">
+                <Pencil className="h-4.5 w-4.5 text-teal-400" />
+                <span>Edit Group Expense</span>
+              </h2>
+              <button onClick={() => setEditExpenseModalVisible(false)} className="text-slate-400 hover:text-white">✕</button>
+            </div>
+
+            <form onSubmit={handleEditExpenseSubmit} className="space-y-4">
+              <div>
+                <label className="block text-xs font-medium text-slate-300 mb-1">Cost Amount (₹) *</label>
+                <input
+                  type="number"
+                  required
+                  min="1"
+                  step="any"
+                  value={editExpenseAmount}
+                  onChange={(e) => setEditExpenseAmount(e.target.value)}
+                  className="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-teal-500 transition text-sm font-semibold"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-slate-300 mb-1">Description / Notes</label>
+                <input
+                  type="text"
+                  value={editExpenseDesc}
+                  onChange={(e) => setEditExpenseDesc(e.target.value)}
+                  className="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-teal-500 transition text-sm"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-slate-300 mb-1">Cost Category</label>
+                <select
+                  value={editExpenseCategory}
+                  onChange={(e) => setEditExpenseCategory(e.target.value)}
+                  className="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-teal-500 transition text-sm"
+                >
+                  {Object.keys(CATEGORY_ICONS).map((catName) => (
+                    <option key={catName} value={catName}>{catName}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-slate-300 mb-1">Paid By (Payer)</label>
+                <select
+                  value={editExpensePaidBy}
+                  onChange={(e) => setEditExpensePaidBy(e.target.value)}
+                  className="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-teal-500 transition text-sm"
+                >
+                  {memberList.map((m: string) => (
+                    <option key={m} value={m}>{m}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="flex space-x-3 pt-4 border-t border-white/10">
+                <button
+                  type="button"
+                  onClick={() => setEditExpenseModalVisible(false)}
+                  className="flex-1 bg-white/5 hover:bg-white/10 text-white rounded-xl py-2.5 text-xs font-semibold transition"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600 text-slate-950 font-bold rounded-xl py-2.5 text-xs transition active:scale-95"
+                >
+                  Save Changes
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
