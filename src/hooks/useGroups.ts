@@ -63,20 +63,26 @@ export function useGroups() {
     budget: number;
     description?: string;
   }) => {
-    if (!user || !profile) {
+    if (!user) {
       toast.error("Sign in to create a group trip");
       return null;
     }
 
     try {
+      const organizerName = profile?.name || user.displayName || user.email?.split("@")[0] || "Traveler";
       const code = Math.random().toString(36).substring(2, 8).toUpperCase();
-      const newGroup = {
-        ...groupData,
+
+      const newGroup: Record<string, any> = {
+        groupName: groupData.groupName,
+        destination: groupData.destination,
+        startDate: groupData.startDate,
+        endDate: groupData.endDate,
+        budget: groupData.budget,
         code,
         createdBy: user.uid,
         ownerUid: user.uid,
-        organizer: profile.name,
-        members: [profile.name],
+        organizer: organizerName,
+        members: [organizerName],
         memberUids: [user.uid],
         itinerary: [
           { day: 1, title: "Day 1 Plan", plan: "Arrival & Sightseeing", destinations: [] }
@@ -84,6 +90,10 @@ export function useGroups() {
         expenses: [],
         createdAt: new Date().toISOString(),
       };
+
+      if (groupData.description && groupData.description.trim()) {
+        newGroup.description = groupData.description.trim();
+      }
 
       const docRef = await addDoc(collection(db, "groups"), newGroup);
       toast.success(`Group Created! Share code: ${code}`);
@@ -96,7 +106,7 @@ export function useGroups() {
   };
 
   const joinGroup = async (inviteCode: string) => {
-    if (!user || !profile) {
+    if (!user) {
       toast.error("Sign in to join a group");
       return null;
     }
@@ -125,9 +135,10 @@ export function useGroups() {
         return groupId;
       }
 
+      const memberName = profile?.name || user.displayName || user.email?.split("@")[0] || "Traveler";
       const groupRef = doc(db, "groups", groupId);
       await updateDoc(groupRef, {
-        members: arrayUnion(profile.name),
+        members: arrayUnion(memberName),
         memberUids: arrayUnion(user.uid),
       });
 

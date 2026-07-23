@@ -31,7 +31,7 @@ export default function GroupsPage() {
       startDate,
       endDate,
       budget: Number(budget),
-      description: description || undefined,
+      description: description.trim(),
     });
 
     setGroupName("");
