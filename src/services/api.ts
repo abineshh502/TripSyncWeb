@@ -107,27 +107,21 @@ export const travelApiService = {
     message: string,
     history: ChatMessage[] = []
   ): Promise<string> {
-    try {
-      const headers = await getAuthHeaders();
-      const response = await fetch(`${API_BASE_URL}/chat`, {
-        method: "POST",
-        headers,
-        body: JSON.stringify({
-          message,
-          history: history.map((h) => ({ role: h.role, content: h.content })),
-        }),
-      });
-      if (!response.ok) throw new Error(`Backend HTTP ${response.status}`);
-      const data = await response.json();
-      return data.reply;
-    } catch {
-      const q = message.toLowerCase();
-      if (q.includes("goa") || q.includes("beach"))
-        return "🏖️ Goa is a paradise for beach lovers! Best months: Nov–Feb. Ask me about safety scores or hidden gems!";
-      if (q.includes("manali"))
-        return "🏔️ Manali is perfect for snow adventures. Best time: Dec–Feb for skiing, Jun–Aug for trekking!";
-      return `🤖 TripSync AI: Got your message about "${message}". Start the backend for full AI-powered responses!`;
+    const headers = await getAuthHeaders();
+    const response = await fetch(`${API_BASE_URL}/chat`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({
+        message,
+        history: history.map((h) => ({ role: h.role, content: h.content })),
+      }),
+    });
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      throw new Error(err.detail || `Backend HTTP ${response.status}`);
     }
+    const data = await response.json();
+    return data.reply;
   },
 
   /**
@@ -135,44 +129,16 @@ export const travelApiService = {
    * Auth: Firebase ID token required
    */
   async getCitySafety(city: string): Promise<SafetyMetrics> {
-    try {
-      const headers = await getAuthHeaders();
-      const response = await fetch(
-        `${API_BASE_URL}/safety?city=${encodeURIComponent(city)}`,
-        { headers }
-      );
-      if (!response.ok) throw new Error(`Backend HTTP ${response.status}`);
-      return await response.json();
-    } catch {
-      const hash = city.length % 3;
-      return {
-        city,
-        generalSafety: Number((8.2 + hash * 0.5).toFixed(1)),
-        nightSafety: Number((7.8 + hash * 0.4).toFixed(1)),
-        trafficIndex:
-          hash === 0
-            ? "Mild Delays"
-            : hash === 1
-            ? "Moderate Traffic"
-            : "Heavy Transit",
-        weatherHazard: hash === 2 ? "Moderate (Windy)" : "Low Risk",
-        gems: [
-          {
-            name: "Scenic Sunrise Cliff",
-            desc: "A quiet, spectacular valley view ideal for morning meditation",
-          },
-          {
-            name: "Old Heritage Alleyway",
-            desc: "19th century vintage buildings away from standard tourist maps",
-          },
-          {
-            name: "Cozy Riverbank Brews",
-            desc: "Local organic tea/coffee shop with relaxing wooden swing decks",
-          },
-        ],
-        recommendations: `${city} is generally safe for travelers. Maintain standard vigilance and enjoy your trip!`,
-      };
+    const headers = await getAuthHeaders();
+    const response = await fetch(
+      `${API_BASE_URL}/safety?city=${encodeURIComponent(city)}`,
+      { headers }
+    );
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      throw new Error(err.detail || `Backend HTTP ${response.status}`);
     }
+    return await response.json();
   },
 
   /**
@@ -181,37 +147,17 @@ export const travelApiService = {
    */
   async optimizeTravelRoute(spots: RouteSpot[]): Promise<RouteSpot[]> {
     if (spots.length <= 2) return spots;
-    try {
-      const headers = await getAuthHeaders();
-      const response = await fetch(`${API_BASE_URL}/routes/optimize`, {
-        method: "POST",
-        headers,
-        body: JSON.stringify(spots),
-      });
-      if (!response.ok) throw new Error("FastAPI HTTP status error");
-      return await response.json();
-    } catch {
-      // Local greedy fallback when backend is unreachable
-      const optimized: RouteSpot[] = [spots[0]];
-      const unvisited = [...spots.slice(1)];
-      while (unvisited.length > 0) {
-        const last = optimized[optimized.length - 1];
-        let nearestIdx = 0;
-        let minDist = Infinity;
-        for (let i = 0; i < unvisited.length; i++) {
-          const u = unvisited[i];
-          const dist =
-            Math.pow(u.latitude - last.latitude, 2) +
-            Math.pow(u.longitude - last.longitude, 2);
-          if (dist < minDist) {
-            minDist = dist;
-            nearestIdx = i;
-          }
-        }
-        optimized.push(unvisited.splice(nearestIdx, 1)[0]);
-      }
-      return optimized;
+    const headers = await getAuthHeaders();
+    const response = await fetch(`${API_BASE_URL}/routes/optimize`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify(spots),
+    });
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      throw new Error(err.detail || `Backend HTTP ${response.status}`);
     }
+    return await response.json();
   },
 
   /**
@@ -301,65 +247,18 @@ export const travelApiService = {
         typeof data.weatherTemp === "number" ? data.weatherTemp : null,
       weatherDesc: data.weatherDesc ?? null,
     };
-    try {
-      const headers = await getAuthHeaders();
-      const response = await fetch(`${API_BASE_URL}/briefing`, {
-        method: "POST",
-        headers,
-        body: JSON.stringify(cleanData),
-      });
-      if (!response.ok) throw new Error("Backend briefing error");
-      const res = await response.json();
-      return res.briefing;
-    } catch {
-      // Local fallback when backend is unreachable
-      const greeting = new Date().getHours() < 12 ? "Good Morning" : "Hello";
-      const parts = [`${greeting} ${cleanData.userName}.`];
-      if (cleanData.activeTripName && cleanData.activeTripDestination) {
-        parts.push(
-          `Today you have your ${cleanData.activeTripName} in ${cleanData.activeTripDestination} active.`
-        );
-        if (cleanData.todayScheduleTitle) {
-          parts.push(`Your schedule is ${cleanData.todayScheduleTitle}.`);
-        }
-        if (
-          cleanData.todayScheduleSpots &&
-          cleanData.todayScheduleSpots.length > 0
-        ) {
-          parts.push(
-            `Your first stop is ${cleanData.todayScheduleSpots[0]}. Traffic nearby is currently moderate.`
-          );
-        }
-      } else if (
-        cleanData.upcomingTripName &&
-        cleanData.upcomingTripDestination
-      ) {
-        parts.push(
-          `You don't have an active trip today, but your upcoming trip ${cleanData.upcomingTripName} to ${cleanData.upcomingTripDestination} starts in ${cleanData.upcomingTripDays} days.`
-        );
-      } else {
-        parts.push(
-          "You don't have any active or upcoming trips scheduled right now."
-        );
-      }
-      if (cleanData.weatherTemp !== null) {
-        parts.push(
-          `Weather is ${cleanData.weatherDesc || "clear sky"} with ${Math.round(
-            cleanData.weatherTemp
-          )} degrees.`
-        );
-      }
-      if (
-        cleanData.groupName &&
-        cleanData.groupExpensesCount &&
-        cleanData.groupExpensesCount > 0
-      ) {
-        parts.push(
-          `Your group ${cleanData.groupName} has updates, with ${cleanData.groupExpensesCount} expenses added today.`
-        );
-      }
-      return parts.join(" ");
+    const headers = await getAuthHeaders();
+    const response = await fetch(`${API_BASE_URL}/briefing`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify(cleanData),
+    });
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      throw new Error(err.detail || `Backend HTTP ${response.status}`);
     }
+    const res = await response.json();
+    return res.briefing;
   },
 
   /**
