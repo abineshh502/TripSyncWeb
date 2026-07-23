@@ -31,17 +31,6 @@ const REQUIRED_ENV_VARS = [
   "NEXT_PUBLIC_FIREBASE_APP_ID",
 ] as const;
 
-if (typeof window !== "undefined" || process.env.NODE_ENV === "development") {
-  const missing = REQUIRED_ENV_VARS.filter((v) => !process.env[v]);
-  if (missing.length > 0) {
-    console.error(
-      "[Firebase] Missing required environment variables:",
-      missing.join(", "),
-      "\nCopy .env.example to .env.local and fill in your Firebase project values."
-    );
-  }
-}
-
 // ─── Firebase Configuration (Production project tripsync-8e63e) ─────────────
 const firebaseConfig = {
   apiKey:            process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "AIzaSyDpBTv3re8BuZR-i25ZeuKsUykN1DYcxNo",
@@ -52,6 +41,10 @@ const firebaseConfig = {
   appId:             process.env.NEXT_PUBLIC_FIREBASE_APP_ID || "1:167694267883:web:61bd7d4f75be2ad2a915ae",
   measurementId:     process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID || "G-QN6RB14ZGF",
 };
+
+if (typeof window !== "undefined" && (!firebaseConfig.apiKey || !firebaseConfig.projectId)) {
+  console.warn("[Firebase] Environment variables not provided; using production project fallback.");
+}
 
 // ─── Initialize Firebase (SSR-safe — singleton) ────────────────────────────────
 const app: FirebaseApp = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);

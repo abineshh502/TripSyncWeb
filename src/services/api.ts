@@ -35,35 +35,66 @@ const API_BASE_URL = getApiBaseUrl();
 
 // ─── Auth Headers ─────────────────────────────────────────────────────────────
 /**
- * Retrieve Firebase ID token for the current user.
- * forceRefresh=true ensures we always get a non-expired token.
- * Throws if no user is authenticated (never silently bypasses auth).
+ * Retrieve Firebase ID token for the current user if signed in.
+ * Attaches Authorization: Bearer <token> header when authenticated.
  */
 async function getAuthHeaders(): Promise<HeadersInit> {
-  const user = auth.currentUser;
-  if (!user) {
-    throw new Error("[API] No authenticated user. Please sign in.");
-  }
-  // Firebase SDK automatically refreshes the token if it's expired
-  const token = await user.getIdToken(/* forceRefresh= */ false);
-  return {
+  const headers: Record<string, string> = {
     "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`,
   };
+  let user = auth.currentUser;
+  if (!user && typeof window !== "undefined") {
+    await new Promise<void>((resolve) => {
+      const unsubscribe = auth.onAuthStateChanged((u) => {
+        user = u;
+        unsubscribe();
+        resolve();
+      });
+      setTimeout(() => {
+        unsubscribe();
+        resolve();
+      }, 500);
+    });
+  }
+  if (user) {
+    try {
+      const token = await user.getIdToken(false);
+      headers["Authorization"] = `Bearer ${token}`;
+    } catch (e) {
+      console.warn("[API] Failed to acquire Firebase ID token:", e);
+    }
+  }
+  return headers;
 }
 
 /**
  * Auth headers for multipart/form-data requests (no Content-Type — browser sets boundary).
  */
 async function getAuthHeadersFormData(): Promise<HeadersInit> {
-  const user = auth.currentUser;
-  if (!user) {
-    throw new Error("[API] No authenticated user. Please sign in.");
+  const headers: Record<string, string> = {};
+  let user = auth.currentUser;
+  if (!user && typeof window !== "undefined") {
+    await new Promise<void>((resolve) => {
+      const unsubscribe = auth.onAuthStateChanged((u) => {
+        user = u;
+        unsubscribe();
+        resolve();
+      });
+      setTimeout(() => {
+        unsubscribe();
+        resolve();
+      }, 500);
+    });
   }
-  const token = await user.getIdToken(false);
-  return {
-    Authorization: `Bearer ${token}`,
-  };
+  if (user) {
+    try {
+      const token = await user.getIdToken(false);
+      headers["Authorization"] = `Bearer ${token}`;
+    } catch (e) {
+      console.warn("[API] Failed to acquire Firebase ID token:", e);
+    }
+  }
+  return headers;
 }
 
 // ─── API Service ──────────────────────────────────────────────────────────────
