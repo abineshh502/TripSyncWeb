@@ -48,11 +48,18 @@ export default function TripDetailPage() {
   const [loading, setLoading] = useState(true);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
+  const rawParamId = (params?.id as string) || "";
+  const searchParamId = typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("id") : null;
+  const targetTripId = (rawParamId && rawParamId !== "default") ? rawParamId : (searchParamId || rawParamId);
+
   useEffect(() => {
-    if (!user || !params?.id) return;
+    if (!user || !targetTripId || targetTripId === "default") {
+      if (!targetTripId || targetTripId === "default") setLoading(false);
+      return;
+    }
 
     const unsubscribe = onSnapshot(
-      doc(db, "trips", String(params.id)),
+      doc(db, "trips", targetTripId),
       (snapshot) => {
         if (snapshot.exists()) {
           const data = snapshot.data();
@@ -74,7 +81,7 @@ export default function TripDetailPage() {
     );
 
     return () => unsubscribe();
-  }, [params?.id, user, router]);
+  }, [targetTripId, user, router]);
 
   const handleDelete = async () => {
     if (!trip?.id) return;

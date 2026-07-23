@@ -83,7 +83,9 @@ const isValidRouteId = (id: string): boolean => {
 export default function SharedRoutePage() {
   const params = useParams();
   const router = useRouter();
-  const routeId = params?.routeId as string;
+  const rawRouteId = (params?.routeId as string) || "";
+  const searchRouteId = typeof window !== "undefined" ? (new URLSearchParams(window.location.search).get("routeId") || new URLSearchParams(window.location.search).get("id")) : null;
+  const routeId = (rawRouteId && rawRouteId !== "default") ? rawRouteId : (searchRouteId || rawRouteId);
 
   const [loading, setLoading] = useState(true);
   const [routeData, setRouteData] = useState<any>(null);
@@ -101,7 +103,10 @@ export default function SharedRoutePage() {
   const rawCoordsRef = useRef<{ latitude: number; longitude: number }[]>([]);
 
   useEffect(() => {
-    if (!routeId) return;
+    if (!routeId || routeId === "default") {
+      if (!routeId || routeId === "default") setLoading(false);
+      return;
+    }
 
     const fetchRoute = async () => {
       const cleanId = sanitizeRouteId(routeId);

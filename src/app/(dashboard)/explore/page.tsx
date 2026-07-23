@@ -105,6 +105,12 @@ export default function ExplorePage() {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
+  // Initial load for default destination
+  useEffect(() => {
+    setPlace("Goa");
+    fetchPlaces("Goa", "🏖 Beaches");
+  }, []);
+
   const handlePlaceTextChange = (text: string) => {
     setPlace(text);
     if (autocompleteTimer.current) clearTimeout(autocompleteTimer.current);

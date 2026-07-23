@@ -212,11 +212,18 @@ export default function GroupDetailsPage() {
     };
   }, [group?.id, activeTab, user]);
 
+  const rawParamId = (params?.id as string) || "";
+  const searchParamId = typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("id") : null;
+  const targetGroupId = (rawParamId && rawParamId !== "default") ? rawParamId : (searchParamId || rawParamId);
+
   useEffect(() => {
-    if (!params?.id || !user) return;
+    if (!targetGroupId || targetGroupId === "default" || !user) {
+      if (!targetGroupId || targetGroupId === "default") setLoading(false);
+      return;
+    }
 
     const unsubscribe = onSnapshot(
-      doc(db, "groups", String(params.id)),
+      doc(db, "groups", targetGroupId),
       (snapshot) => {
         if (snapshot.exists()) {
           const data = snapshot.data();
