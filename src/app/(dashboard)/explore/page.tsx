@@ -31,13 +31,13 @@ import { toast } from "react-hot-toast";
 const GEOAPIFY_KEY = "303db9c9ea7b411f81e4aaa234c881e5";
 
 const CATEGORIES = [
-  { label: "🏖 Beaches", type: "natural.beach" },
+  { label: "🏖 Beaches", type: "beach" },
   { label: "🍴 Restaurants", type: "catering.restaurant" },
   { label: "☕ Cafes", type: "catering.cafe" },
-  { label: "🏛 Heritage", type: "tourism.attraction" },
+  { label: "🏛 Heritage", type: "tourism.sights" },
   { label: "🌿 Nature", type: "natural" },
   { label: "🏨 Hotels", type: "accommodation.hotel" },
-  { label: "🛍 Shopping", type: "commercial.shopping_mall" },
+  { label: "🛍 Shopping", type: "commercial" },
 ];
 
 const CAT_IMAGES: any = {
@@ -203,21 +203,34 @@ export default function ExplorePage() {
         ]);
       }
 
-      const catType = CATEGORIES.find((c) => c.label === category)?.type || "tourism.attraction";
+      const catType = CATEGORIES.find((c) => c.label === category)?.type || "tourism.sights";
       const placesRes = await fetch(
-        `https://api.geoapify.com/v2/places?categories=${catType}&filter=circle:${lon},${lat},10000&limit=20&apiKey=${GEOAPIFY_KEY}`
+        `https://api.geoapify.com/v2/places?categories=${catType}&filter=circle:${lon},${lat},50000&limit=20&apiKey=${GEOAPIFY_KEY}`
       );
       const placesData = await placesRes.json();
-      if (placesData.features) {
-        const mapped = placesData.features
-          .filter((f: any) => f.properties.name)
-          .map((f: any) => ({
-            id: f.properties.place_id,
-            name: f.properties.name,
+      let features = placesData.features || [];
+
+      // If specific category yields no results, fallback to broader tourism & sights category
+      if (features.length === 0) {
+        const fallbackRes = await fetch(
+          `https://api.geoapify.com/v2/places?categories=tourism.sights,catering.restaurant,beach&filter=circle:${lon},${lat},50000&limit=20&apiKey=${GEOAPIFY_KEY}`
+        );
+        const fallbackData = await fallbackRes.json();
+        if (fallbackData.features?.length) {
+          features = fallbackData.features;
+        }
+      }
+
+      if (features.length > 0) {
+        const mapped = features
+          .filter((f: any) => f.properties.name || f.properties.formatted)
+          .map((f: any, idx: number) => ({
+            id: f.properties.place_id || `place_${idx}`,
+            name: f.properties.name || f.properties.address_line1 || `${cleanCity} Spot #${idx + 1}`,
             address: f.properties.formatted || f.properties.address_line2 || cleanCity,
-            lat: f.geometry.coordinates[1],
-            lon: f.geometry.coordinates[0],
-            rating: parseFloat((3.5 + Math.random() * 1.5).toFixed(1)),
+            lat: f.geometry?.coordinates ? f.geometry.coordinates[1] : lat,
+            lon: f.geometry?.coordinates ? f.geometry.coordinates[0] : lon,
+            rating: parseFloat((3.8 + (idx % 5) * 0.25).toFixed(1)),
             distance: f.properties.distance ? Math.round(f.properties.distance / 100) / 10 : null,
           }));
         setResults(mapped);
