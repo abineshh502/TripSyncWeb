@@ -109,36 +109,52 @@ export default function GroupDetailsPage() {
 
     setIsUploadingReceipt(true);
 
+    const convertToBase64 = (f: File): Promise<string> => {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => resolve(e.target?.result as string);
+        reader.onerror = (e) => reject(e);
+        reader.readAsDataURL(f);
+      });
+    };
+
     try {
+      let uploadedUrl = "";
+
+      // Try Firebase Storage with a 5-second timeout
       if (storage) {
         try {
-          const storageRef = ref(storage, `receipts/${user?.uid || "web"}_${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.-]/g, "_")}`);
-          const snapshot = await uploadBytes(storageRef, file);
-          const downloadUrl = await getDownloadURL(snapshot.ref);
-          setReceiptImagePlaceholder(downloadUrl);
+          const fileName = `${user?.uid || "web"}_${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.-]/g, "_")}`;
+          const storageRef = ref(storage, `receipts/${fileName}`);
+
+          const uploadPromise = (async () => {
+            const snapshot = await uploadBytes(storageRef, file);
+            return await getDownloadURL(snapshot.ref);
+          })();
+
+          const timeoutPromise = new Promise<string>((_, reject) =>
+            setTimeout(() => reject(new Error("Storage upload timed out after 5s")), 5000)
+          );
+
+          uploadedUrl = await Promise.race([uploadPromise, timeoutPromise]);
           toast.success("Receipt image uploaded to storage!");
-          setIsUploadingReceipt(false);
-          return;
         } catch (storageErr) {
-          console.warn("Firebase Storage upload fallback:", storageErr);
+          console.warn("Firebase Storage unavailable or timed out, falling back to local Base64:", storageErr);
         }
       }
 
-      // Base64 Data URL encoding fallback
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setReceiptImagePlaceholder(e.target?.result as string);
+      // If Firebase Storage failed or timed out, use Base64 fallback
+      if (!uploadedUrl) {
+        uploadedUrl = await convertToBase64(file);
         toast.success("Receipt image attached!");
-        setIsUploadingReceipt(false);
-      };
-      reader.onerror = () => {
-        toast.error("Could not read image file");
-        setIsUploadingReceipt(false);
-      };
-      reader.readAsDataURL(file);
+      }
+
+      setReceiptImagePlaceholder(uploadedUrl);
     } catch (err) {
-      console.error(err);
-      toast.error("Failed to process receipt image");
+      console.error("Error processing receipt file:", err);
+      toast.error("Could not process receipt image.");
+    } finally {
+      // Mandatory: Always turn off upload spinner
       setIsUploadingReceipt(false);
     }
   };

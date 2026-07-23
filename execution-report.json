@@ -1,14 +1,14 @@
 {
   "title": "TripSync Web Ultimate CI/CD & Production Verification Report",
-  "timestamp": "2026-07-23T10:14:35.163211",
+  "timestamp": "2026-07-23T14:04:54.164668",
   "summary": {
     "total_tests": 500,
     "passed": 500,
     "failed": 0,
     "skipped": 0,
     "pass_rate_percentage": 100.0,
-    "total_assertions": 767,
-    "duration_seconds": 37.28,
+    "total_assertions": 760,
+    "duration_seconds": 66.43,
     "backend_url": "https://tripsync-backend-ra7p.onrender.com",
     "github_pages_url": "https://abineshh502.github.io/TripSyncWeb",
     "status": "PASSED"
@@ -40,7 +40,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_001",
       "Status": "PASS",
-      "Duration": 2.189,
+      "Duration": 4.234,
       "Error Details": ""
     },
     {
@@ -48,7 +48,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_002",
       "Status": "PASS",
-      "Duration": 0.321,
+      "Duration": 3.317,
       "Error Details": ""
     },
     {
@@ -56,7 +56,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_003",
       "Status": "PASS",
-      "Duration": 0.631,
+      "Duration": 3.336,
       "Error Details": ""
     },
     {
@@ -64,7 +64,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_004",
       "Status": "PASS",
-      "Duration": 0.382,
+      "Duration": 3.285,
       "Error Details": ""
     },
     {
@@ -72,7 +72,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_005",
       "Status": "PASS",
-      "Duration": 0.267,
+      "Duration": 3.343,
       "Error Details": ""
     },
     {
@@ -80,7 +80,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_006",
       "Status": "PASS",
-      "Duration": 0.346,
+      "Duration": 3.224,
       "Error Details": ""
     },
     {
@@ -88,7 +88,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_007",
       "Status": "PASS",
-      "Duration": 0.447,
+      "Duration": 3.267,
       "Error Details": ""
     },
     {
@@ -96,7 +96,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_008",
       "Status": "PASS",
-      "Duration": 0.297,
+      "Duration": 1.597,
       "Error Details": ""
     },
     {
@@ -104,7 +104,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_009",
       "Status": "PASS",
-      "Duration": 0.331,
+      "Duration": 0.891,
       "Error Details": ""
     },
     {
@@ -112,7 +112,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_010",
       "Status": "PASS",
-      "Duration": 0.355,
+      "Duration": 0.984,
       "Error Details": ""
     },
     {
@@ -120,7 +120,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_011",
       "Status": "PASS",
-      "Duration": 0.248,
+      "Duration": 0.224,
       "Error Details": ""
     },
     {
@@ -128,7 +128,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_012",
       "Status": "PASS",
-      "Duration": 0.349,
+      "Duration": 0.351,
       "Error Details": ""
     },
     {
@@ -136,7 +136,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_013",
       "Status": "PASS",
-      "Duration": 0.235,
+      "Duration": 0.223,
       "Error Details": ""
     },
     {
@@ -144,7 +144,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_014",
       "Status": "PASS",
-      "Duration": 0.283,
+      "Duration": 0.254,
       "Error Details": ""
     },
     {
@@ -152,7 +152,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_015",
       "Status": "PASS",
-      "Duration": 0.343,
+      "Duration": 0.281,
       "Error Details": ""
     },
     {
@@ -160,7 +160,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_016",
       "Status": "PASS",
-      "Duration": 0.369,
+      "Duration": 0.219,
       "Error Details": ""
     },
     {
@@ -168,7 +168,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_017",
       "Status": "PASS",
-      "Duration": 0.355,
+      "Duration": 0.232,
       "Error Details": ""
     },
     {
@@ -176,7 +176,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_018",
       "Status": "PASS",
-      "Duration": 0.386,
+      "Duration": 0.285,
       "Error Details": ""
     },
     {
@@ -184,7 +184,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_019",
       "Status": "PASS",
-      "Duration": 0.427,
+      "Duration": 0.217,
       "Error Details": ""
     },
     {
@@ -192,7 +192,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_020",
       "Status": "PASS",
-      "Duration": 0.28,
+      "Duration": 0.242,
       "Error Details": ""
     },
     {
@@ -200,7 +200,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_021",
       "Status": "PASS",
-      "Duration": 0.58,
+      "Duration": 0.284,
       "Error Details": ""
     },
     {
@@ -208,7 +208,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_022",
       "Status": "PASS",
-      "Duration": 0.307,
+      "Duration": 0.226,
       "Error Details": ""
     },
     {
@@ -216,7 +216,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_023",
       "Status": "PASS",
-      "Duration": 0.311,
+      "Duration": 0.238,
       "Error Details": ""
     },
     {
@@ -224,7 +224,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_024",
       "Status": "PASS",
-      "Duration": 0.296,
+      "Duration": 0.223,
       "Error Details": ""
     },
     {
@@ -232,7 +232,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_025",
       "Status": "PASS",
-      "Duration": 0.246,
+      "Duration": 0.235,
       "Error Details": ""
     },
     {
@@ -240,7 +240,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_026",
       "Status": "PASS",
-      "Duration": 0.54,
+      "Duration": 0.225,
       "Error Details": ""
     },
     {
@@ -248,7 +248,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_027",
       "Status": "PASS",
-      "Duration": 0.346,
+      "Duration": 0.249,
       "Error Details": ""
     },
     {
@@ -256,7 +256,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_028",
       "Status": "PASS",
-      "Duration": 0.548,
+      "Duration": 0.296,
       "Error Details": ""
     },
     {
@@ -264,7 +264,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_029",
       "Status": "PASS",
-      "Duration": 0.967,
+      "Duration": 0.222,
       "Error Details": ""
     },
     {
@@ -272,7 +272,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_030",
       "Status": "PASS",
-      "Duration": 0.281,
+      "Duration": 0.223,
       "Error Details": ""
     },
     {
@@ -280,7 +280,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_031",
       "Status": "PASS",
-      "Duration": 0.403,
+      "Duration": 0.375,
       "Error Details": ""
     },
     {
@@ -288,7 +288,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_032",
       "Status": "PASS",
-      "Duration": 0.294,
+      "Duration": 0.246,
       "Error Details": ""
     },
     {
@@ -296,7 +296,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_033",
       "Status": "PASS",
-      "Duration": 0.249,
+      "Duration": 0.252,
       "Error Details": ""
     },
     {
@@ -304,7 +304,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_034",
       "Status": "PASS",
-      "Duration": 0.338,
+      "Duration": 0.255,
       "Error Details": ""
     },
     {
@@ -312,7 +312,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_035",
       "Status": "PASS",
-      "Duration": 0.238,
+      "Duration": 0.302,
       "Error Details": ""
     },
     {
@@ -320,7 +320,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_036",
       "Status": "PASS",
-      "Duration": 0.305,
+      "Duration": 0.246,
       "Error Details": ""
     },
     {
@@ -328,7 +328,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_037",
       "Status": "PASS",
-      "Duration": 0.725,
+      "Duration": 0.231,
       "Error Details": ""
     },
     {
@@ -336,7 +336,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_038",
       "Status": "PASS",
-      "Duration": 0.319,
+      "Duration": 0.22,
       "Error Details": ""
     },
     {
@@ -344,7 +344,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_039",
       "Status": "PASS",
-      "Duration": 0.426,
+      "Duration": 0.407,
       "Error Details": ""
     },
     {
@@ -352,7 +352,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_040",
       "Status": "PASS",
-      "Duration": 0.252,
+      "Duration": 0.222,
       "Error Details": ""
     },
     {
@@ -360,7 +360,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_041",
       "Status": "PASS",
-      "Duration": 0.543,
+      "Duration": 0.832,
       "Error Details": ""
     },
     {
@@ -376,7 +376,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_043",
       "Status": "PASS",
-      "Duration": 0.326,
+      "Duration": 0.443,
       "Error Details": ""
     },
     {
@@ -384,7 +384,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_044",
       "Status": "PASS",
-      "Duration": 0.248,
+      "Duration": 0.29,
       "Error Details": ""
     },
     {
@@ -392,7 +392,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_045",
       "Status": "PASS",
-      "Duration": 0.239,
+      "Duration": 0.227,
       "Error Details": ""
     },
     {
@@ -400,7 +400,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_046",
       "Status": "PASS",
-      "Duration": 0.898,
+      "Duration": 0.219,
       "Error Details": ""
     },
     {
@@ -408,7 +408,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_047",
       "Status": "PASS",
-      "Duration": 0.246,
+      "Duration": 0.758,
       "Error Details": ""
     },
     {
@@ -416,7 +416,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_048",
       "Status": "PASS",
-      "Duration": 0.374,
+      "Duration": 0.261,
       "Error Details": ""
     },
     {
@@ -424,7 +424,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_049",
       "Status": "PASS",
-      "Duration": 0.303,
+      "Duration": 0.219,
       "Error Details": ""
     },
     {
@@ -432,7 +432,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_050",
       "Status": "PASS",
-      "Duration": 0.239,
+      "Duration": 0.22,
       "Error Details": ""
     },
     {
@@ -440,7 +440,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_051",
       "Status": "PASS",
-      "Duration": 0.263,
+      "Duration": 0.22,
       "Error Details": ""
     },
     {
@@ -448,7 +448,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_052",
       "Status": "PASS",
-      "Duration": 0.29,
+      "Duration": 0.252,
       "Error Details": ""
     },
     {
@@ -456,7 +456,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_053",
       "Status": "PASS",
-      "Duration": 0.247,
+      "Duration": 0.262,
       "Error Details": ""
     },
     {
@@ -464,7 +464,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_054",
       "Status": "PASS",
-      "Duration": 0.294,
+      "Duration": 2.016,
       "Error Details": ""
     },
     {
@@ -472,7 +472,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_055",
       "Status": "PASS",
-      "Duration": 0.246,
+      "Duration": 4.025,
       "Error Details": ""
     },
     {
@@ -480,7 +480,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_056",
       "Status": "PASS",
-      "Duration": 0.263,
+      "Duration": 2.127,
       "Error Details": ""
     },
     {
@@ -488,7 +488,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_057",
       "Status": "PASS",
-      "Duration": 0.407,
+      "Duration": 1.194,
       "Error Details": ""
     },
     {
@@ -496,7 +496,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_058",
       "Status": "PASS",
-      "Duration": 0.245,
+      "Duration": 0.575,
       "Error Details": ""
     },
     {
@@ -504,7 +504,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_059",
       "Status": "PASS",
-      "Duration": 0.266,
+      "Duration": 0.286,
       "Error Details": ""
     },
     {
@@ -512,7 +512,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_060",
       "Status": "PASS",
-      "Duration": 0.62,
+      "Duration": 0.283,
       "Error Details": ""
     },
     {
@@ -520,7 +520,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_061",
       "Status": "PASS",
-      "Duration": 0.293,
+      "Duration": 0.337,
       "Error Details": ""
     },
     {
@@ -528,7 +528,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_062",
       "Status": "PASS",
-      "Duration": 0.871,
+      "Duration": 0.283,
       "Error Details": ""
     },
     {
@@ -536,7 +536,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_063",
       "Status": "PASS",
-      "Duration": 0.509,
+      "Duration": 0.241,
       "Error Details": ""
     },
     {
@@ -544,7 +544,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_064",
       "Status": "PASS",
-      "Duration": 0.245,
+      "Duration": 0.414,
       "Error Details": ""
     },
     {
@@ -552,7 +552,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_065",
       "Status": "PASS",
-      "Duration": 0.315,
+      "Duration": 0.477,
       "Error Details": ""
     },
     {
@@ -560,7 +560,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_066",
       "Status": "PASS",
-      "Duration": 0.337,
+      "Duration": 0.24,
       "Error Details": ""
     },
     {
@@ -568,7 +568,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_067",
       "Status": "PASS",
-      "Duration": 0.334,
+      "Duration": 0.297,
       "Error Details": ""
     },
     {
@@ -576,7 +576,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_068",
       "Status": "PASS",
-      "Duration": 0.496,
+      "Duration": 0.308,
       "Error Details": ""
     },
     {
@@ -584,7 +584,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_069",
       "Status": "PASS",
-      "Duration": 0.255,
+      "Duration": 0.236,
       "Error Details": ""
     },
     {
@@ -592,7 +592,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_070",
       "Status": "PASS",
-      "Duration": 0.389,
+      "Duration": 0.24,
       "Error Details": ""
     },
     {
@@ -600,7 +600,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_071",
       "Status": "PASS",
-      "Duration": 0.224,
+      "Duration": 0.269,
       "Error Details": ""
     },
     {
@@ -608,7 +608,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_072",
       "Status": "PASS",
-      "Duration": 0.232,
+      "Duration": 0.274,
       "Error Details": ""
     },
     {
@@ -616,7 +616,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_073",
       "Status": "PASS",
-      "Duration": 0.34,
+      "Duration": 0.24,
       "Error Details": ""
     },
     {
@@ -624,7 +624,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_074",
       "Status": "PASS",
-      "Duration": 0.276,
+      "Duration": 0.641,
       "Error Details": ""
     },
     {
@@ -632,7 +632,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_075",
       "Status": "PASS",
-      "Duration": 0.703,
+      "Duration": 0.611,
       "Error Details": ""
     },
     {
@@ -640,7 +640,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_076",
       "Status": "PASS",
-      "Duration": 0.37,
+      "Duration": 0.25,
       "Error Details": ""
     },
     {
@@ -648,7 +648,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_077",
       "Status": "PASS",
-      "Duration": 0.259,
+      "Duration": 0.342,
       "Error Details": ""
     },
     {
@@ -656,7 +656,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_078",
       "Status": "PASS",
-      "Duration": 0.242,
+      "Duration": 0.771,
       "Error Details": ""
     },
     {
@@ -664,7 +664,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_079",
       "Status": "PASS",
-      "Duration": 0.251,
+      "Duration": 0.599,
       "Error Details": ""
     },
     {
@@ -672,7 +672,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_080",
       "Status": "PASS",
-      "Duration": 0.281,
+      "Duration": 0.488,
       "Error Details": ""
     },
     {
@@ -680,7 +680,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_081",
       "Status": "PASS",
-      "Duration": 0.31,
+      "Duration": 0.244,
       "Error Details": ""
     },
     {
@@ -688,7 +688,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_082",
       "Status": "PASS",
-      "Duration": 0.26,
+      "Duration": 0.575,
       "Error Details": ""
     },
     {
@@ -696,7 +696,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_083",
       "Status": "PASS",
-      "Duration": 0.26,
+      "Duration": 0.287,
       "Error Details": ""
     },
     {
@@ -704,7 +704,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_084",
       "Status": "PASS",
-      "Duration": 0.265,
+      "Duration": 0.224,
       "Error Details": ""
     },
     {
@@ -712,7 +712,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_085",
       "Status": "PASS",
-      "Duration": 0.306,
+      "Duration": 0.322,
       "Error Details": ""
     },
     {
@@ -720,7 +720,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_086",
       "Status": "PASS",
-      "Duration": 0.328,
+      "Duration": 0.226,
       "Error Details": ""
     },
     {
@@ -728,7 +728,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_087",
       "Status": "PASS",
-      "Duration": 0.468,
+      "Duration": 0.245,
       "Error Details": ""
     },
     {
@@ -736,7 +736,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_088",
       "Status": "PASS",
-      "Duration": 0.27,
+      "Duration": 0.366,
       "Error Details": ""
     },
     {
@@ -744,7 +744,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_089",
       "Status": "PASS",
-      "Duration": 0.241,
+      "Duration": 0.323,
       "Error Details": ""
     },
     {
@@ -752,7 +752,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_090",
       "Status": "PASS",
-      "Duration": 0.306,
+      "Duration": 0.223,
       "Error Details": ""
     },
     {
@@ -760,7 +760,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_091",
       "Status": "PASS",
-      "Duration": 0.336,
+      "Duration": 0.306,
       "Error Details": ""
     },
     {
@@ -768,7 +768,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_092",
       "Status": "PASS",
-      "Duration": 0.235,
+      "Duration": 0.298,
       "Error Details": ""
     },
     {
@@ -776,7 +776,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_093",
       "Status": "PASS",
-      "Duration": 0.419,
+      "Duration": 1.906,
       "Error Details": ""
     },
     {
@@ -784,7 +784,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_094",
       "Status": "PASS",
-      "Duration": 0.574,
+      "Duration": 1.084,
       "Error Details": ""
     },
     {
@@ -792,7 +792,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_095",
       "Status": "PASS",
-      "Duration": 0.29,
+      "Duration": 0.277,
       "Error Details": ""
     },
     {
@@ -800,7 +800,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_096",
       "Status": "PASS",
-      "Duration": 0.271,
+      "Duration": 0.421,
       "Error Details": ""
     },
     {
@@ -808,7 +808,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_097",
       "Status": "PASS",
-      "Duration": 0.306,
+      "Duration": 0.347,
       "Error Details": ""
     },
     {
@@ -816,7 +816,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_098",
       "Status": "PASS",
-      "Duration": 0.363,
+      "Duration": 0.319,
       "Error Details": ""
     },
     {
@@ -824,7 +824,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_099",
       "Status": "PASS",
-      "Duration": 0.358,
+      "Duration": 0.338,
       "Error Details": ""
     },
     {
@@ -832,7 +832,7 @@
       "Category": "API Unit",
       "Test Name": "test_api_unit_100",
       "Status": "PASS",
-      "Duration": 0.263,
+      "Duration": 0.38,
       "Error Details": ""
     },
     {
