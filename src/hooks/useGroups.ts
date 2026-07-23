@@ -159,14 +159,19 @@ export function useGroups() {
       category: string;
       paidBy: string; // member name
       splitBetween: string[]; // array of member names
+      receiptImage?: string;
     }
   ) => {
     try {
       const groupRef = doc(db, "groups", groupId);
       await updateDoc(groupRef, {
         expenses: arrayUnion({
-          ...expenseData,
-          receiptImage: "",
+          amount: expenseData.amount,
+          description: expenseData.description,
+          category: expenseData.category,
+          paidBy: expenseData.paidBy,
+          splitBetween: expenseData.splitBetween,
+          receiptImage: expenseData.receiptImage || "",
           createdAt: new Date().toISOString(),
         }),
       });

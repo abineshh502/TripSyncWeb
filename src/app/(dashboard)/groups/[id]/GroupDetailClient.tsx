@@ -4,7 +4,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { doc, onSnapshot, updateDoc, arrayUnion, collection, query, orderBy, addDoc, serverTimestamp } from "firebase/firestore";
-import { db } from "../../../../lib/firebase";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { db, storage } from "../../../../lib/firebase";
 import { useAuth } from "../../../../hooks/useAuth";
 import { travelApiService } from "../../../../services/api";
 import dynamic from "next/dynamic";
@@ -25,7 +26,14 @@ import {
   X,
   Loader2,
   TrendingUp,
-  Search
+  Search,
+  Upload,
+  Image as ImageIcon,
+  FileText,
+  Camera,
+  Paperclip,
+  Eye,
+  Trash2,
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { formatDate, formatCurrency } from "../../../../lib/utils";
@@ -77,6 +85,63 @@ export default function GroupDetailsPage() {
   const [expensePaidBy, setExpensePaidBy] = useState("");
   const [expenseSplitBetween, setExpenseSplitBetween] = useState<string[]>([]);
   const [receiptImagePlaceholder, setReceiptImagePlaceholder] = useState("");
+  const [isUploadingReceipt, setIsUploadingReceipt] = useState(false);
+  const [isDraggingReceipt, setIsDraggingReceipt] = useState(false);
+  const [viewReceiptUrl, setViewReceiptUrl] = useState<string | null>(null);
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const processReceiptFile = async (file: File) => {
+    const validExtensions = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+    const fileExt = file.name.split(".").pop()?.toLowerCase();
+    const isAllowedExt = ["jpg", "jpeg", "png", "webp"].includes(fileExt || "");
+
+    if (!validExtensions.includes(file.type.toLowerCase()) && !isAllowedExt) {
+      toast.error("Invalid format! Only JPG, JPEG, PNG, and WebP receipt images are allowed.");
+      return;
+    }
+
+    const maxSize = 10 * 1024 * 1024; // 10MB
+    if (file.size > maxSize) {
+      toast.error("File size exceeds 10MB limit.");
+      return;
+    }
+
+    setIsUploadingReceipt(true);
+
+    try {
+      if (storage) {
+        try {
+          const storageRef = ref(storage, `receipts/${user?.uid || "web"}_${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.-]/g, "_")}`);
+          const snapshot = await uploadBytes(storageRef, file);
+          const downloadUrl = await getDownloadURL(snapshot.ref);
+          setReceiptImagePlaceholder(downloadUrl);
+          toast.success("Receipt image uploaded to storage!");
+          setIsUploadingReceipt(false);
+          return;
+        } catch (storageErr) {
+          console.warn("Firebase Storage upload fallback:", storageErr);
+        }
+      }
+
+      // Base64 Data URL encoding fallback
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setReceiptImagePlaceholder(e.target?.result as string);
+        toast.success("Receipt image attached!");
+        setIsUploadingReceipt(false);
+      };
+      reader.onerror = () => {
+        toast.error("Could not read image file");
+        setIsUploadingReceipt(false);
+      };
+      reader.readAsDataURL(file);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to process receipt image");
+      setIsUploadingReceipt(false);
+    }
+  };
 
   const [selectedDayIndex, setSelectedDayIndex] = useState<number | null>(null);
   const [dayTitleInput, setDayTitleInput] = useState("");
@@ -405,35 +470,39 @@ export default function GroupDetailsPage() {
 
   const handleAddExpenseSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!expenseAmount.trim() || !expenseDesc.trim()) {
-      toast.error("Please fill in cost and description");
+    const costVal = Number(expenseAmount);
+    if (!expenseAmount.trim() || isNaN(costVal) || costVal <= 0) {
+      toast.error("Please enter a valid expense cost amount");
       return;
     }
     if (expenseSplitBetween.length === 0) {
-      toast.error("Select at least one member to split cost");
+      toast.error("Select at least one member to split the expense");
       return;
     }
+
+    const descriptionText = expenseDesc.trim() || `${expenseCategory} expense`;
 
     try {
       const ref = doc(db, "groups", group.id);
       await updateDoc(ref, {
         expenses: arrayUnion({
-          amount: Number(expenseAmount),
-          description: expenseDesc.trim(),
+          amount: costVal,
+          description: descriptionText,
           category: expenseCategory,
-          paidBy: expensePaidBy,
+          paidBy: expensePaidBy || (memberList[0] || "Traveler"),
           splitBetween: expenseSplitBetween,
           receiptImage: receiptImagePlaceholder || "",
           createdAt: new Date().toISOString(),
         }),
       });
-      toast.success("Shared bill logged!");
+      toast.success("Expense Logged! 💰");
       setExpenseModalVisible(false);
       setExpenseAmount("");
       setExpenseDesc("");
       setReceiptImagePlaceholder("");
-    } catch {
-      toast.error("Failed to add expense");
+    } catch (err) {
+      console.error("Error logging expense:", err);
+      toast.error("Could not log expense");
     }
   };
 
@@ -1061,7 +1130,7 @@ export default function GroupDetailsPage() {
                   type="submit"
                   className="flex-1 bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600 text-slate-950 font-semibold rounded-xl py-2.5 text-sm transition active:scale-95"
                 >
-                  Save Day
+                  Save Changes
                 </button>
               </div>
             </form>
@@ -1073,20 +1142,36 @@ export default function GroupDetailsPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
           <div className="glass-panel max-w-md w-full rounded-2xl border border-white/10 p-6 space-y-6 shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center border-b border-white/5 pb-4">
-              <h2 className="text-lg font-bold text-white">Log Group Bill Expense</h2>
+              <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                <CreditCard className="h-5 w-5 text-teal-400" />
+                <span>Log Group Bill Expense</span>
+              </h2>
               <button onClick={() => setExpenseModalVisible(false)} className="text-slate-400 hover:text-white">✕</button>
             </div>
 
             <form onSubmit={handleAddExpenseSubmit} className="space-y-4">
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">Cost Amount (₹)</label>
+                <label className="block text-xs font-medium text-slate-300 mb-1">Cost Amount (₹) *</label>
                 <input
                   type="number"
                   required
+                  min="1"
+                  step="any"
                   value={expenseAmount}
                   onChange={(e) => setExpenseAmount(e.target.value)}
                   placeholder="e.g. 1500"
                   className="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-teal-500 transition text-sm font-semibold"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-slate-300 mb-1">Description / Notes (Optional)</label>
+                <input
+                  type="text"
+                  value={expenseDesc}
+                  onChange={(e) => setExpenseDesc(e.target.value)}
+                  placeholder="e.g. Dinner at Beach Shack"
+                  className="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-teal-500 transition text-sm"
                 />
               </div>
 
@@ -1142,14 +1227,97 @@ export default function GroupDetailsPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">Receipt Scanner (Image Placeholder)</label>
+                <label className="block text-xs font-medium text-slate-300 mb-1.5 flex justify-between items-center">
+                  <span>Attach Receipt Image</span>
+                  <span className="text-[10px] text-slate-400 font-normal">Max 10MB • JPG, PNG, WebP</span>
+                </label>
+
                 <input
-                  type="text"
-                  value={receiptImagePlaceholder}
-                  onChange={(e) => setReceiptImagePlaceholder(e.target.value)}
-                  placeholder="Paste Receipt Image URL (optional)"
-                  className="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-teal-500 transition text-xs font-mono"
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,image/jpg"
+                  onChange={(e) => {
+                    if (e.target.files && e.target.files[0]) {
+                      processReceiptFile(e.target.files[0]);
+                    }
+                  }}
+                  className="hidden"
                 />
+
+                {isUploadingReceipt ? (
+                  <div className="w-full bg-slate-900/80 border border-teal-500/40 rounded-xl p-5 flex flex-col items-center justify-center space-y-2 text-teal-400 animate-pulse">
+                    <Loader2 className="h-6 w-6 animate-spin" />
+                    <span className="text-xs font-semibold">Uploading receipt image...</span>
+                  </div>
+                ) : receiptImagePlaceholder ? (
+                  <div className="relative w-full bg-slate-900 border border-white/10 rounded-xl p-3 flex items-center justify-between space-x-3">
+                    <div className="flex items-center space-x-3 overflow-hidden">
+                      <div className="relative w-12 h-12 rounded-lg overflow-hidden border border-white/10 flex-shrink-0 bg-slate-950">
+                        <img
+                          src={receiptImagePlaceholder}
+                          alt="Receipt preview"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="truncate">
+                        <p className="text-xs font-semibold text-white truncate">Receipt Attached</p>
+                        <button
+                          type="button"
+                          onClick={() => setViewReceiptUrl(receiptImagePlaceholder)}
+                          className="text-[10px] text-teal-400 hover:underline flex items-center gap-1 mt-0.5"
+                        >
+                          <Eye className="h-3 w-3" /> View Preview
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center space-x-1.5 flex-shrink-0">
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="px-2.5 py-1 text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 rounded-lg text-xs font-semibold transition"
+                      >
+                        Replace
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setReceiptImagePlaceholder("")}
+                        className="p-1.5 text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 rounded-lg transition"
+                        title="Remove receipt"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div
+                    onDragOver={(e) => {
+                      e.preventDefault();
+                      setIsDraggingReceipt(true);
+                    }}
+                    onDragLeave={(e) => {
+                      e.preventDefault();
+                      setIsDraggingReceipt(false);
+                    }}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      setIsDraggingReceipt(false);
+                      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                        processReceiptFile(e.dataTransfer.files[0]);
+                      }
+                    }}
+                    onClick={() => fileInputRef.current?.click()}
+                    className={`w-full border-2 border-dashed rounded-xl p-5 flex flex-col items-center justify-center cursor-pointer transition-all ${
+                      isDraggingReceipt
+                        ? "border-teal-500 bg-teal-500/10 text-teal-300"
+                        : "border-white/10 hover:border-teal-500/50 bg-slate-900/60 hover:bg-slate-900 text-slate-400 hover:text-slate-200"
+                    }`}
+                  >
+                    <Upload className="h-6 w-6 text-teal-400 mb-1.5" />
+                    <p className="text-xs font-semibold text-white">Click or Drag & Drop Receipt Image</p>
+                    <p className="text-[10px] text-slate-500 mt-0.5">Supports JPG, PNG, WebP up to 10MB</p>
+                  </div>
+                )}
               </div>
 
               <div className="flex space-x-3 pt-4 border-t border-white/5">
@@ -1162,12 +1330,48 @@ export default function GroupDetailsPage() {
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600 text-slate-950 font-semibold rounded-xl py-2.5 text-sm transition active:scale-95"
+                  disabled={isUploadingReceipt}
+                  className="flex-1 bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600 text-slate-950 font-semibold rounded-xl py-2.5 text-sm transition active:scale-95 disabled:opacity-50"
                 >
-                  Log Split
+                  Log Expense
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {viewReceiptUrl && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-md">
+          <div className="glass-panel max-w-2xl w-full rounded-2xl border border-white/10 p-6 space-y-4 shadow-2xl relative">
+            <div className="flex justify-between items-center border-b border-white/10 pb-3">
+              <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                <Paperclip className="h-4 w-4 text-teal-400" />
+                Attached Receipt Image
+              </h3>
+              <button
+                onClick={() => setViewReceiptUrl(null)}
+                className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-white/5"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <div className="max-h-[70vh] overflow-auto rounded-xl border border-white/10 bg-slate-950 flex items-center justify-center p-2">
+              <img
+                src={viewReceiptUrl}
+                alt="Receipt Full View"
+                className="max-w-full max-h-[65vh] object-contain rounded-lg shadow-lg"
+              />
+            </div>
+            <div className="flex justify-end pt-2">
+              <button
+                type="button"
+                onClick={() => setViewReceiptUrl(null)}
+                className="bg-white/10 hover:bg-white/20 text-white rounded-xl px-4 py-2 text-xs font-semibold transition"
+              >
+                Close Preview
+              </button>
+            </div>
           </div>
         </div>
       )}

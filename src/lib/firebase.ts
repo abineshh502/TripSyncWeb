@@ -46,10 +46,13 @@ if (typeof window !== "undefined" && (!firebaseConfig.apiKey || !firebaseConfig.
   console.warn("[Firebase] Environment variables not provided; using production project fallback.");
 }
 
+import { getStorage, type FirebaseStorage } from "firebase/storage";
+
 // ─── Initialize Firebase (SSR-safe — singleton) ────────────────────────────────
 const app: FirebaseApp = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
 const auth: Auth = getAuth(app);
 const db: Firestore = getFirestore(app);
+const storage: FirebaseStorage = getStorage(app);
 
-export { app, auth, db };
+export { app, auth, db, storage };
 

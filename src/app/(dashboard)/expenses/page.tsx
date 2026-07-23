@@ -53,14 +53,21 @@ export default function ExpensesPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!amount || !description || splitBetween.length === 0) {
-      toast.error("Please fill in cost, description and select split buddies.");
+    const costVal = Number(amount);
+    if (!amount || isNaN(costVal) || costVal <= 0) {
+      toast.error("Please enter a valid expense cost amount.");
+      return;
+    }
+    if (splitBetween.length === 0) {
+      toast.error("Select at least one member to split expenses.");
       return;
     }
 
+    const descriptionText = description.trim() || `${category} expense`;
+
     const success = await addExpense(selectedGroupId, {
-      amount: Number(amount),
-      description: description.trim(),
+      amount: costVal,
+      description: descriptionText,
       category,
       paidBy,
       splitBetween,
